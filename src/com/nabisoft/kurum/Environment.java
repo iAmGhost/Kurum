@@ -3,18 +3,18 @@ package com.nabisoft.kurum;
 import org.apache.commons.lang3.SystemUtils;
 
 public class Environment {
-	public static String APPDATA = getAppData();
+	public static String APPDATA;
+	public static String APPDATA_LOCAL;
 	
-	private static String getAppData() {
+	static {
 		String appDataDir = SystemUtils.getUserHome().toString();
 		
 		if (SystemUtils.IS_OS_WINDOWS) {
-			return appDataDir += "/AppData/Roaming/Kurum";
+			APPDATA_LOCAL = appDataDir + "/AppData/Local";
+			APPDATA = appDataDir + "/AppData/Roaming/Kurum";
 		}
 		else if (SystemUtils.IS_OS_MAC_OSX) {
-			return appDataDir += "/Application Support/Kurum";
+			APPDATA = appDataDir +"/Application Support/Kurum";
 		}
-		
-		return appDataDir;
 	}
 }

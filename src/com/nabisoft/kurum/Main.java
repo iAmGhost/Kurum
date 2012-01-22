@@ -8,16 +8,12 @@ import com.nabisoft.kurum.ui.WindowFactory;
 public class Main {
 
 	public static void main (String [] args) {
-		PropertyUtil a = new PropertyUtil().loadDefaultFile();
-		a.setString("Hello", "hi");
-		a.save();
-		System.out.println(Environment.APPDATA);
-		
 	    Display display = new Display();
 	    WindowFactory.setDisplay(display);
-	    Window aa = WindowFactory.create("DropboxLogin");
+	    Window mainWindow = WindowFactory.create("DropboxLogin");
 
-	    while (!aa.isDisposed()) {
+	    mainWindow.open();
+	    while (!mainWindow.isDisposed()) {
 	        if (!display.readAndDispatch()) display.sleep();
 	    }
 	    display.dispose();

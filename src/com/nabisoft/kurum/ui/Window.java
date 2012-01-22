@@ -4,15 +4,31 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 public class Window {
-	final protected Shell mShell;
+	final private Shell shell;
 	
 	public Window(Display display) {
-		mShell = new Shell(display);
-		mShell.setText("BaseWindow");
-		mShell.open();
+		shell = new Shell(display);
+		init();
 	}
 	
+	public Window(Display display, int style) {
+		shell = new Shell(display, style);
+		init();
+	}
+	
+	public void init() {
+		shell.setText("BaseWindow");
+	}
+	
+	public Shell getShell() {
+		return shell;
+	}
+
 	public boolean isDisposed() {
-		return mShell.isDisposed();
+		return getShell().isDisposed();
+	}
+	
+	public void open() {
+		getShell().open();
 	}
 }

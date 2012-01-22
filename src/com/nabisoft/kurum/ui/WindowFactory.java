@@ -7,6 +7,12 @@ import org.eclipse.swt.widgets.Display;
 
 public class WindowFactory {
 	private static Display mDisplay;
+	private static HashMap<String, String> mWindows;
+	
+	static {
+		mWindows = new HashMap<String, String>();
+		mWindows.put("DropboxLogin", "com.nabisoft.kurum.ui.DropboxLoginWindow");
+	}
 	
 	public static void setDisplay(Display display) {
 		mDisplay = display;
@@ -18,8 +24,7 @@ public class WindowFactory {
 	
 	public static Window create(String windowName) {
 		try {
-			HashMap<String, String> map = WindowFactory.getHash();
-			String windowClassName = map.get(windowName);
+			String windowClassName = mWindows.get(windowName);
 			Constructor<?> windowClass = Class.forName(windowClassName).getConstructor(Display.class);
 			return (Window) windowClass.newInstance(mDisplay);
 		}
@@ -28,10 +33,5 @@ public class WindowFactory {
 		}
 		return null;
 	}
-	
-	public static HashMap<String, String> getHash() {
-		HashMap<String, String> map = new HashMap<String, String>();
-		map.put("DropboxLogin", "com.nabisoft.kurum.ui.DropboxLoginWindow");
-		return map;
-	}
+
 }
