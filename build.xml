@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================== 
+     2012. 1. 21. 오후 11:51:28                                                        
+
+     project    
+     description
+                   
+     Ghost                                                                
+     ====================================================================== -->
+<project name="project" default="dist">
+	<taskdef name="swtjar" classname="org.swtjar.ant.SWTJarTask" classpath="./lib/swtjar.jar"/>
+	
+	<property name="lib.dir" value="lib"/>
+	<property name="src.dir" value="src"/>
+	<property name="dist.dir" value="dist"/>
+	<property name="build.dir" value="build"/>
+	
+    <description>
+            description
+    </description>
+	
+    <target name="prepare">
+		<tstamp>
+    		<format property="DSTAMP" pattern="yyyy/mm/dd"/>
+			<format property="TSTAMP" pattern="HH:mm"/>
+    	</tstamp>
+		<echo message="Buld Start: ${DSTAMP}-{$TSTAMP}"/>
+    </target>
+
+	<target name="clean" depends="prepare">
+		<delete dir="${dist.dir}"/>
+		<delete dir="${build.dir}"/>
+	</target>
+	
+	<target name="compile" depends="clean">
+		<mkdir dir="${build.dir}"/>
+
+		<javac deprecation="off" srcdir="${src.dir}" destdir="${build.dir}" listfiles="no"
+			failonerror="true" includeantruntime="true">
+			<classpath>
+				<pathelement path="./lib"/>
+				<fileset dir="./lib">
+					<include name="*.jar"/>
+				</fileset>
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="dist" depends="compile">
+		<swtjar jarfile="${dist.dir}/Kurum.jar"
+			targetmainclass="com.nabisoft.kurum.Main"
+			swtversion="3.7.1">
+			<!-- Application Classes -->
+			<fileset dir="./bin" includes="**/*.class" />
+			<fileset dir="./bin" includes="**/*.properties" />
+			<!-- SWT Jars -->
+			<fileset dir="./lib" includes="swt-*-3.7.1.jar" />
+			<zipgroupfileset dir="${lib.dir}" includes="**/*.jar" />
+		</swtjar>
+	</target>
+
+</project>

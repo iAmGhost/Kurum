@@ -1,0 +1,7 @@
+#Unnecessary directories
+.settings/
+build/
+bin/
+dist/
+#Secret API Keys
+src/com/nabisoft/kurum/APIKeys.properties
