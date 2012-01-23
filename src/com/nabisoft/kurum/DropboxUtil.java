@@ -1,7 +1,11 @@
 package com.nabisoft.kurum;
 
+import java.io.File;
+import java.io.FileInputStream;
+
 import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.DropboxAPI.Account;
+import com.dropbox.client2.DropboxAPI.Entry;
 import com.dropbox.client2.exception.DropboxException;
 import com.dropbox.client2.session.AccessTokenPair;
 import com.dropbox.client2.session.AppKeyPair;
@@ -29,6 +33,25 @@ public class DropboxUtil {
 		client = new DropboxAPI<WebAuthSession>(session);
 		
 		loadSavedKeys();
+	}
+	
+	public Entry Upload(String path, String destPath) {
+		return Upload(path, destPath, null);
+	}
+	
+	public Entry Upload(String path, String destPath, String rev) {
+		Entry result = null;
+
+		try {
+			File file = new File(path);
+			FileInputStream is = new FileInputStream(file);
+			result = client.putFile(path, is, file.length(), rev, null);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
 	}
 	
 	public void loadSavedKeys() {

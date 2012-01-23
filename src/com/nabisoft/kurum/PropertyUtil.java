@@ -9,16 +9,16 @@ import java.util.Properties;
 
 
 public class PropertyUtil {
-	private Properties mProperty = null;
-	private String mFilePath = null;
+	private Properties property = null;
+	private String propertyFilePath = null;
 	
 	protected void init(InputStream is) throws IOException {
-		mProperty = new Properties();
-		mProperty.load(is);
+		property = new Properties();
+		property.load(is);
 	}
 	
 	public PropertyUtil loadDefaultFile() {
-		loadFile(mFilePath = Environment.APPDATA + "/Kurum.properties");
+		loadFile(propertyFilePath = Environment.APPDATA + "/Kurum.properties");
 		
 		return this;
 	}
@@ -28,24 +28,25 @@ public class PropertyUtil {
 			init(is);
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			System.out.println("Cannot find local properties file: " + path);
+			System.exit(1);
 		}
 		
 		return this;
 	}
 	
 	public PropertyUtil loadFile(String filePath) {
-		mFilePath = filePath;
+		propertyFilePath = filePath;
 		
 		try {
 			File file = new File(filePath);
 			File folder = file.getParentFile();
 			
-			if (!file.isFile()) {
-				file.createNewFile();
-			}
 			if (!folder.isDirectory()) {
 				folder.mkdirs();
+			}
+			if (!file.isFile()) {
+				file.createNewFile();
 			}
 			
 			FileInputStream is;
@@ -60,17 +61,17 @@ public class PropertyUtil {
 	}
 	
 	public String getString(String key) {
-		return mProperty.getProperty(key);
+		return property.getProperty(key);
 	}
 	
 	public void setString(String key, String value) {
-		mProperty.setProperty(key, value);
+		property.setProperty(key, value);
 	}
 	
 	public void save() {
 		try {
-			FileOutputStream os = new FileOutputStream(mFilePath);
-			mProperty.store(os, "");
+			FileOutputStream os = new FileOutputStream(propertyFilePath);
+			property.store(os, "");
 		}
 		catch (Exception e) {
 			e.printStackTrace();
