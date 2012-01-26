@@ -1,4 +1,4 @@
-package kr.nabisoft.kurum.ui;
+package kr.iamghost.kurum.ui;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;

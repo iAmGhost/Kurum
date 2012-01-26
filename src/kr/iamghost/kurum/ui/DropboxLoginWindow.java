@@ -1,4 +1,4 @@
-package kr.nabisoft.kurum.ui;
+package kr.iamghost.kurum.ui;
 
 import kr.iamghost.kurum.DropboxUtil;
 import kr.iamghost.kurum.Language;

@@ -1,4 +1,4 @@
-package kr.nabisoft.kurum.ui;
+package kr.iamghost.kurum.ui;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;

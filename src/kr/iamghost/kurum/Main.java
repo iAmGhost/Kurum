@@ -1,7 +1,7 @@
 package kr.iamghost.kurum;
 
-import kr.nabisoft.kurum.ui.Window;
-import kr.nabisoft.kurum.ui.WindowFactory;
+import kr.iamghost.kurum.ui.Window;
+import kr.iamghost.kurum.ui.WindowFactory;
 
 import org.eclipse.swt.widgets.Display;
 
