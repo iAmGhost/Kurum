@@ -1,9 +1,10 @@
-package com.nabisoft.kurum;
+package kr.iamghost.kurum;
+
+import kr.nabisoft.kurum.ui.Window;
+import kr.nabisoft.kurum.ui.WindowFactory;
 
 import org.eclipse.swt.widgets.Display;
 
-import com.nabisoft.kurum.ui.Window;
-import com.nabisoft.kurum.ui.WindowFactory;
 
 public class Main {
 

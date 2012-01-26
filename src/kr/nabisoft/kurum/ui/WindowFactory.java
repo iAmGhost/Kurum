@@ -1,4 +1,4 @@
-package com.nabisoft.kurum.ui;
+package kr.nabisoft.kurum.ui;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
@@ -11,7 +11,7 @@ public class WindowFactory {
 	
 	static {
 		mWindows = new HashMap<String, String>();
-		mWindows.put("DropboxLogin", "com.nabisoft.kurum.ui.DropboxLoginWindow");
+		mWindows.put("DropboxLogin", "DropboxLoginWindow");
 	}
 	
 	public static void setDisplay(Display display) {
@@ -24,7 +24,8 @@ public class WindowFactory {
 	
 	public static Window create(String windowName) {
 		try {
-			String windowClassName = mWindows.get(windowName);
+			String packageName = WindowFactory.class.getPackage().getName();
+			String windowClassName = packageName + "." + mWindows.get(windowName);
 			Constructor<?> windowClass = Class.forName(windowClassName).getConstructor(Display.class);
 			return (Window) windowClass.newInstance(mDisplay);
 		}

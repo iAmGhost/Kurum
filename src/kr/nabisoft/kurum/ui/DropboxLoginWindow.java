@@ -1,4 +1,7 @@
-package com.nabisoft.kurum.ui;
+package kr.nabisoft.kurum.ui;
+
+import kr.iamghost.kurum.DropboxUtil;
+import kr.iamghost.kurum.Language;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -12,8 +15,6 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
 import com.dropbox.client2.DropboxAPI.Account;
-import com.nabisoft.kurum.DropboxUtil;
-import com.nabisoft.kurum.Language;
 
 import edu.stanford.ejalbert.BrowserLauncher;
 public class DropboxLoginWindow extends Window implements SelectionListener{

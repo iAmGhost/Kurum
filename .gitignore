@@ -4,4 +4,4 @@ build/
 bin/
 dist/
 #Secret API Keys
-src/com/nabisoft/kurum/APIKeys.properties
+src/kr/iamghost/kurum/APIKeys.properties

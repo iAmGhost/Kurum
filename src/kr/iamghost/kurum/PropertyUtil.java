@@ -1,4 +1,4 @@
-package com.nabisoft.kurum;
+package kr.iamghost.kurum;
 
 import java.io.File;
 import java.io.FileInputStream;

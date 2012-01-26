@@ -1,9 +1,9 @@
-package com.nabisoft.kurum;
+package kr.iamghost.kurum;
 
 import java.util.ResourceBundle;
 
 public class Language {
-	private final static String LANGFILE = "com.nabisoft.kurum.Messages";
+	private final static String LANGFILE = "kr.iamghost.kurum.Messages";
 	private final static ResourceBundle resource;
 	
 	static {

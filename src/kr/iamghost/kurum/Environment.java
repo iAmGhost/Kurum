@@ -1,4 +1,4 @@
-package com.nabisoft.kurum;
+package kr.iamghost.kurum;
 
 import org.apache.commons.lang3.SystemUtils;
 

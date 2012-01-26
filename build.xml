@@ -48,7 +48,7 @@
 
 	<target name="dist" depends="compile">
 		<swtjar jarfile="${dist.dir}/Kurum.jar"
-			targetmainclass="com.nabisoft.kurum.Main"
+			targetmainclass="kr.nabisoft.kurum.Main"
 			swtversion="3.7.1">
 			<!-- Application Classes -->
 			<fileset dir="./bin" includes="**/*.class" />
