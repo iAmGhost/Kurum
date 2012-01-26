@@ -12,6 +12,7 @@ public class Main {
 	    Display display = new Display();
 	    WindowFactory.setDisplay(display);
 	    Window mainWindow = WindowFactory.create("DropboxLogin");
+	    ProcessUtil.refresh();
 
 	    mainWindow.open();
 	    while (!mainWindow.isDisposed()) {
