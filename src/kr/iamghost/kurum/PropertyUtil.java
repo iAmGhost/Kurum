@@ -18,8 +18,7 @@ public class PropertyUtil {
 	}
 	
 	public PropertyUtil loadDefaultFile() {
-		loadFile(propertyFilePath = Environment.APPDATA + "/Kurum.properties");
-		
+		loadFile(propertyFilePath = Environment.APPDATA + "/Kurum/Kurum.properties");
 		return this;
 	}
 	public PropertyUtil loadLocalFile(String path) {
@@ -61,6 +60,10 @@ public class PropertyUtil {
 	}
 	
 	public String getString(String key) {
+		String data = property.getProperty(key);
+		
+		if (data == null) return "";
+		
 		return property.getProperty(key);
 	}
 	

@@ -4,15 +4,18 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 public class Window {
+	final private Display display;
 	final private Shell shell;
 	
 	public Window(Display display) {
 		shell = new Shell(display);
+		this.display = display;
 		init();
 	}
 	
 	public Window(Display display, int style) {
 		shell = new Shell(display, style);
+		this.display = display;
 		init();
 	}
 	
@@ -30,5 +33,9 @@ public class Window {
 	
 	public void open() {
 		getShell().open();
+	}
+
+	public Display getDisplay() {
+		return display;
 	}
 }

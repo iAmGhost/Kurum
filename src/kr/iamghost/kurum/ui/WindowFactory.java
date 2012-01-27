@@ -12,6 +12,7 @@ public class WindowFactory {
 	static {
 		mWindows = new HashMap<String, String>();
 		mWindows.put("DropboxLogin", "DropboxLoginWindow");
+		mWindows.put("Main", "MainWindow");
 	}
 	
 	public static void setDisplay(Display display) {

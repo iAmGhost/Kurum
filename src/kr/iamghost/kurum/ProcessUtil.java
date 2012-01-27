@@ -29,7 +29,6 @@ public class ProcessUtil {
 			String line;
 			while ((line = br.readLine()) != null) {
 				processList += line + "\n";
-				System.out.println(line);
 			}
 		}
 		catch (Exception e) {

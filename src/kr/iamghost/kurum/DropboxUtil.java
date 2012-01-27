@@ -35,11 +35,24 @@ public class DropboxUtil {
 		loadSavedKeys();
 	}
 	
-	public Entry Upload(String path, String destPath) {
-		return Upload(path, destPath, null);
+	public Entry getMetadata(String path, int fileLimit, String hash, boolean list, String rev) {
+		Entry entry = null;
+		
+		try {
+			entry = client.metadata(path, fileLimit, hash, list, rev);
+		}
+		catch (DropboxException e) {
+			e.printStackTrace();
+		}
+		
+		return entry;
 	}
 	
-	public Entry Upload(String path, String destPath, String rev) {
+	public Entry upload(String path, String destPath) {
+		return upload(path, destPath, null);
+	}
+	
+	public Entry upload(String path, String destPath, String rev) {
 		Entry result = null;
 
 		try {
@@ -74,7 +87,6 @@ public class DropboxUtil {
 		try {
 			account = client.accountInfo();
 		} catch (DropboxException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

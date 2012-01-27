@@ -8,7 +8,8 @@
      Ghost                                                                
      ====================================================================== -->
 <project name="project" default="dist">
-	<taskdef name="swtjar" classname="org.swtjar.ant.SWTJarTask" classpath="./lib/swtjar.jar"/>
+	<taskdef name="swtjar" classname="org.swtjar.ant.SWTJarTask"
+		classpath="./lib/swtjar.jar"/>
 	
 	<property name="lib.dir" value="lib"/>
 	<property name="src.dir" value="src"/>
@@ -24,7 +25,7 @@
     		<format property="DSTAMP" pattern="yyyy/mm/dd"/>
 			<format property="TSTAMP" pattern="HH:mm"/>
     	</tstamp>
-		<echo message="Buld Start: ${DSTAMP}-{$TSTAMP}"/>
+		<echo message="Buld Start: ${DSTAMP}-${TSTAMP}"/>
     </target>
 
 	<target name="clean" depends="prepare">
@@ -48,7 +49,7 @@
 
 	<target name="dist" depends="compile">
 		<swtjar jarfile="${dist.dir}/Kurum.jar"
-			targetmainclass="kr.nabisoft.kurum.Main"
+			targetmainclass="kr.iamghost.kurum.Main"
 			swtversion="3.7.1">
 			<!-- Application Classes -->
 			<fileset dir="./bin" includes="**/*.class" />
