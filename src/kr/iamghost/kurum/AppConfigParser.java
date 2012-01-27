@@ -13,7 +13,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class AppConfigParser extends DefaultHandler {
 	public enum Status {
-		NONE, APPCONFIG, TITLE, NAME, ENTRIES, ENTRY, PATH, FINALIZE;
+		NONE, APPCONFIG, TITLE, NAME, ENTRIES, ENTRY, FILE, DIR, FINALIZE;
 	}
 	
 	private Status status;
@@ -55,10 +55,16 @@ public class AppConfigParser extends DefaultHandler {
 			tempConfig.setProcess(attributes.getValue("process"));
 			status = Status.ENTRY;
 		}
-		else if (qName.equalsIgnoreCase("path")) {
+		else if (qName.equalsIgnoreCase("file")) {
 			tempFileEntry = new AppConfigFileEntry();
 			tempFileEntry.setDropboxPath(attributes.getValue("dropboxPath"));
-			status = Status.PATH;
+			status = Status.FILE;
+		}
+		else if (qName.equalsIgnoreCase("dir")) {
+			tempFileEntry = new AppConfigFileEntry();
+			tempFileEntry.setDropboxPath(attributes.getValue("dropboxPath"));
+			tempFileEntry.setIsFile(false);
+			status = Status.DIR;
 		}
 	}
 
@@ -75,7 +81,8 @@ public class AppConfigParser extends DefaultHandler {
 			tempConfig.setAppName(tempString);
 			status = Status.NONE;
 			break;
-		case PATH:
+		case FILE:
+		case DIR:
 			tempFileEntry.setOriginalPath(Environment.parsePath(tempString));
 			status = Status.NONE;
 			break;

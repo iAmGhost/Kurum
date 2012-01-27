@@ -3,6 +3,7 @@ package kr.iamghost.kurum;
 public class AppConfigFileEntry {
 	private String originalPath;
 	private String dropboxPath;
+	private boolean isFile = true;
 	
 	public AppConfigFileEntry() {
 		
@@ -27,6 +28,14 @@ public class AppConfigFileEntry {
 	
 	public void setDropboxPath(String dropboxPath) {
 		this.dropboxPath = dropboxPath;
+	}
+
+	public boolean isFile() {
+		return isFile;
+	}
+
+	public void setIsFile(boolean isFile) {
+		this.isFile = isFile;
 	}
 
 }

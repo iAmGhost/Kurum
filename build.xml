@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- ====================================================================== 
-     2012. 1. 21. 오후 11:51:28                                                        
+     2012. 1. 21. �ㅽ썑 11:51:28                                                        
 
      project    
      description
@@ -15,6 +15,7 @@
 	<property name="src.dir" value="src"/>
 	<property name="dist.dir" value="dist"/>
 	<property name="build.dir" value="build"/>
+	<property name="temp.dir" value="temp"/>
 	
     <description>
             description
@@ -31,6 +32,7 @@
 	<target name="clean" depends="prepare">
 		<delete dir="${dist.dir}"/>
 		<delete dir="${build.dir}"/>
+		<delete dir="${temp.dir}"/>
 	</target>
 	
 	<target name="compile" depends="clean">
@@ -48,7 +50,8 @@
 	</target>
 
 	<target name="dist" depends="compile">
-		<swtjar jarfile="${dist.dir}/Kurum.jar"
+		
+		<swtjar jarfile="${temp.dir}/kurum_temp.jar"
 			targetmainclass="kr.iamghost.kurum.Main"
 			swtversion="3.7.1">
 			<!-- Application Classes -->
@@ -60,6 +63,25 @@
 				<exclude name="swt-*-*.jar" />
 			</zipgroupfileset>
 		</swtjar>
+		
+		<unzip src="${temp.dir}/kurum_temp.jar" dest="${temp.dir}" />
+		
+		<jar destfile="${dist.dir}/Kurum.jar"
+			manifest="${temp.dir}/META-INF/MANIFEST.MF">
+			<fileset dir="${temp.dir}/" includes="**/*.*">
+				<exclude name="META-INF/**" />
+				<exclude name="package cache/**" />
+				<exclude name="templates/**" />
+				<exclude name="kurum_temp.jar" />
+				<exclude name="README.txt" />
+				<exclude name="COPYING.txt" />
+			</fileset>
+		</jar>
+		
 	</target>
-
+	
+	<target name="clean_temp" depends="dist">
+		<delete dir="${temp.dir}"/>
+	</target>
+	
 </project>

@@ -9,6 +9,8 @@ public class Environment {
 	
 	public static String APPDATA;
 	public static String APPDATA_LOCAL;
+	public static String VERSION;
+	public static String KURUMTITLE;
 	
 	static {
 		String appDataDir = SystemUtils.getUserHome().toString().replaceAll("\\\\", "/");
@@ -20,6 +22,9 @@ public class Environment {
 		else if (SystemUtils.IS_OS_MAC_OSX) {
 			APPDATA = appDataDir +"/Application Support";
 		}
+		
+		VERSION = "1.0";
+		KURUMTITLE = "Kurum " + VERSION;
 	}
 	
 	public static String parsePath(String path) {
