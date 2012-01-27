@@ -56,7 +56,9 @@
 			<fileset dir="./bin" includes="**/*.properties" />
 			<!-- SWT Jars -->
 			<fileset dir="./lib" includes="swt-*-3.7.1.jar" />
-			<zipgroupfileset dir="${lib.dir}" includes="**/*.jar" />
+			<zipgroupfileset dir="${lib.dir}" includes="*.jar">
+				<exclude name="swt-*-*.jar" />
+			</zipgroupfileset>
 		</swtjar>
 	</target>
 
