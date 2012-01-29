@@ -60,7 +60,9 @@
 			<!-- SWT Jars -->
 			<fileset dir="./lib" includes="swt-*-3.7.1.jar" />
 			<zipgroupfileset dir="${lib.dir}" includes="*.jar">
-				<exclude name="swt-*-*.jar" />
+				<exclude name="swtjar.jar"/>
+				<exclude name="jarbundler-*.jar" />
+				<exclude name="swt-*-*.jar"/>
 			</zipgroupfileset>
 		</swtjar>
 		
@@ -78,6 +80,33 @@
 			</fileset>
 		</jar>
 		
+	</target>
+	
+	<target name="bundle_mac" depends="dist">
+		<taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" 
+			classpath="./lib/jarbundler-2.2.0.jar" />
+		
+		<jarbundler dir="${dist.dir}"
+		            name="Kurum"
+		            mainclass="org.swtjar.SWTLoader" 
+		            jar="${dist.dir}/Kurum.jar"
+					jvmversion="1.6.0+"
+					startOnMainThread="true" />
+		
+		<property name="keyPattern">&lt;key&gt;CFBundleName&lt;/key&gt;</property>
+		<property name="replacePattern">&lt;key&gt;LSUIElement&lt;/key&gt;
+    &lt;string&gt;1&lt;/string&gt;
+    &lt;key&gt;CFBundleName&lt;/key&gt;</property>
+		
+		<copy file="${dist.dir}/Kurum.app/Contents/Info.plist" tofile="${temp.dir}/Info.plist">
+			<filterchain>
+			  <tokenfilter>
+			    <replaceregex pattern="${keyPattern}" replace="${replacePattern}"/>
+			  </tokenfilter>
+			</filterchain>
+		</copy>
+		<delete file="${dist.dir}/Kurum.app/Contents/Info.plist"/>
+		<copy file="${temp.dir}/Info.plist" tofile="${dist.dir}/Kurum.app/Contents/Info.plist"/>
 	</target>
 	
 	<target name="clean_temp" depends="dist">
