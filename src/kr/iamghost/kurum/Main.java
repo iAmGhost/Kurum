@@ -14,7 +14,6 @@ public class Main {
 	    
 	    Window mainWindow = WindowFactory.create("Main");
 	    
-	    mainWindow.open();
 	    while (!mainWindow.isDisposed()) {
 	        if (!display.readAndDispatch()) display.sleep();
 	    }

@@ -9,8 +9,8 @@
      ====================================================================== -->
 <project name="project" default="dist">
 	<taskdef name="swtjar" classname="org.swtjar.ant.SWTJarTask"
-		classpath="./lib/swtjar.jar"/>
-	
+		classpath="./lib/ant/swtjar.jar"/>
+	<property name="basedir" value="./"/>
 	<property name="lib.dir" value="lib"/>
 	<property name="src.dir" value="src"/>
 	<property name="dist.dir" value="dist"/>
@@ -50,7 +50,6 @@
 	</target>
 
 	<target name="dist" depends="compile">
-		
 		<swtjar jarfile="${temp.dir}/kurum_temp.jar"
 			targetmainclass="kr.iamghost.kurum.Main"
 			swtversion="3.7.1">
@@ -58,12 +57,8 @@
 			<fileset dir="./bin" includes="**/*.class" />
 			<fileset dir="./bin" includes="**/*.properties" />
 			<!-- SWT Jars -->
-			<fileset dir="./lib" includes="swt-*-3.7.1.jar" />
-			<zipgroupfileset dir="${lib.dir}" includes="*.jar">
-				<exclude name="swtjar.jar"/>
-				<exclude name="jarbundler-*.jar" />
-				<exclude name="swt-*-*.jar"/>
-			</zipgroupfileset>
+			<fileset dir="${lib.dir}/swt" includes="swt-*-3.7.1.jar" />
+			<zipgroupfileset dir="${lib.dir}" includes="*.jar" />
 		</swtjar>
 		
 		<unzip src="${temp.dir}/kurum_temp.jar" dest="${temp.dir}" />
@@ -82,9 +77,27 @@
 		
 	</target>
 	
+	<target name="bundle_win" depends="dist">
+		
+		<property name="launch4j.dir" value="lib/ant/launch4j" />
+		<taskdef name="launch4j"
+		    classname="net.sf.launch4j.ant.Launch4jTask"
+		    classpath="lib/ant/launch4j/launch4j.jar
+		        :${launch4j.dir}/lib/xstream.jar" />
+		
+		<launch4j>
+			<config dontWrapJar="false" headerType="gui" jarPath="dist/Kurum.jar"
+				outfile="dist/Kurum.exe" customProcName="true">
+				<jre minVersion="1.5.0" jdkPreference="preferJre"/>
+				<singleInstance mutexName="Kurum"/>
+			</config>
+		</launch4j>
+		
+	</target>
+	
 	<target name="bundle_mac" depends="dist">
 		<taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" 
-			classpath="./lib/jarbundler-2.2.0.jar" />
+			classpath="./lib/ant/jarbundler-2.2.0.jar" />
 		
 		<jarbundler dir="${dist.dir}"
 		            name="Kurum"
@@ -97,7 +110,6 @@
 		<property name="replacePattern">&lt;key&gt;LSUIElement&lt;/key&gt;
     &lt;string&gt;1&lt;/string&gt;
     &lt;key&gt;CFBundleName&lt;/key&gt;</property>
-		
 		<copy file="${dist.dir}/Kurum.app/Contents/Info.plist" tofile="${temp.dir}/Info.plist">
 			<filterchain>
 			  <tokenfilter>
@@ -108,9 +120,4 @@
 		<delete file="${dist.dir}/Kurum.app/Contents/Info.plist"/>
 		<copy file="${temp.dir}/Info.plist" tofile="${dist.dir}/Kurum.app/Contents/Info.plist"/>
 	</target>
-	
-	<target name="clean_temp" depends="dist">
-		<delete dir="${temp.dir}"/>
-	</target>
-	
 </project>

@@ -1,7 +1,7 @@
 #Unnecessary directories
-.settings/
 build/
 bin/
 dist/
+temp/
 #Secret API Keys
 src/kr/iamghost/kurum/APIKeys.properties

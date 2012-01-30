@@ -2,9 +2,9 @@ package kr.iamghost.kurum.ui;
 
 import kr.iamghost.kurum.Environment;
 import kr.iamghost.kurum.Language;
-import kr.iamghost.kurum.Log;
 import kr.iamghost.kurum.PropertyUtil;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuDetectEvent;
 import org.eclipse.swt.events.MenuDetectListener;
@@ -30,6 +30,16 @@ public class MainWindow extends Window{
 		super(display);
 	}
 	
+	public void showAndActive() {
+		getShell().setVisible(true);
+		getShell().forceActive();
+	}
+	
+	public void quit() {
+		quit = true;
+		getShell().close();
+	}
+	
 	public void init() {
 		Shell shell = getShell();
 		shell.setText(Environment.KURUMTITLE);
@@ -52,22 +62,35 @@ public class MainWindow extends Window{
 			final Menu menu = new Menu(getShell(), SWT.POP_UP);
 
 			MenuItem menuItem = new MenuItem(menu, SWT.PUSH);
+			menuItem.setText(Language.getString("OpenKurum"));
+			menuItem.addListener(SWT.Selection, new Listener() {
+				@Override
+				public void handleEvent(Event event) {
+					showAndActive();
+				}
+			});
+			
+			new MenuItem(menu, SWT.SEPARATOR);
+			
+			menuItem = new MenuItem(menu, SWT.PUSH);
 			menuItem.setText(Language.getString("Exit"));
 			menuItem.addListener(SWT.Selection, new Listener() {
 				@Override
 				public void handleEvent(Event event) {
-					quit = true;
-					getShell().close();
+					quit();
 				}
 			});
 			
-			item.addListener(SWT.DefaultSelection, new Listener() {
-				@Override
-				public void handleEvent(Event event) {
-					getShell().setVisible(true);
-					getShell().forceActive();
-				}
-			});
+			//Double-clicking tray icon only for Windows
+			if (SystemUtils.IS_OS_WINDOWS) {
+				item.addListener(SWT.DefaultSelection, new Listener() {
+					@Override
+					public void handleEvent(Event event) {
+						showAndActive();
+					}
+				});
+			}
+
 			
 			item.addMenuDetectListener(new MenuDetectListener() {
 				@Override
