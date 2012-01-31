@@ -21,6 +21,7 @@ public class AppConfigParser extends DefaultHandler {
 	private AppConfigFileEntry tempFileEntry;
 	private String platformString;
 	private String tempString;
+	private boolean ignore = false;
 	
 	public AppConfigParser() {
 		SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -30,6 +31,16 @@ public class AppConfigParser extends DefaultHandler {
 		}
 		catch (Exception e) {
 			e.printStackTrace();
+		}
+		
+		if (SystemUtils.IS_OS_WINDOWS) {
+			platformString = "Windows";
+		}
+		else if (SystemUtils.IS_OS_MAC) {
+			platformString = "Mac";
+		}
+		else if (SystemUtils.IS_OS_LINUX) {
+			platformString = "Linux";
 		}
 	}
 	
@@ -49,8 +60,12 @@ public class AppConfigParser extends DefaultHandler {
 		else if (qName.equalsIgnoreCase("entries")) {
 			status = Status.ENTRIES;
 		}
-		else if (qName.equalsIgnoreCase("entry") &&
-				attributes.getValue("os").equalsIgnoreCase(platformString)) {
+		else if (qName.equalsIgnoreCase("entry")) {
+			if (attributes.getValue("os").equalsIgnoreCase(platformString))
+				this.ignore = false;
+			else
+				this.ignore = true;
+			
 			tempConfig.setProcess(attributes.getValue("process"));
 			status = Status.ENTRY;
 		}
@@ -90,7 +105,8 @@ public class AppConfigParser extends DefaultHandler {
 	
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		if (qName.equalsIgnoreCase("entry")) {
-			tempConfig.addFile(tempFileEntry);
+			if (!ignore)
+				tempConfig.addFile(tempFileEntry);
 		}
 		else if(qName.equalsIgnoreCase("AppConfig")) {
 			status = Status.FINALIZE;
@@ -98,15 +114,6 @@ public class AppConfigParser extends DefaultHandler {
 	}
 	
 	public void parse(String filePath) {
-		if (SystemUtils.IS_OS_WINDOWS) {
-			platformString = "Windows";
-		}
-		else if (SystemUtils.IS_OS_MAC) {
-			platformString = "Mac";
-		}
-		else if (SystemUtils.IS_OS_LINUX) {
-			platformString = "Linux";
-		}
 		
 		try {
 			parser.parse(filePath, this);
@@ -122,7 +129,7 @@ public class AppConfigParser extends DefaultHandler {
 	}
 	
 	public AppConfig getAppConfig() {
-		if (status == Status.FINALIZE)
+		if (status == Status.FINALIZE && !this.ignore)
 		{
 			return tempConfig;
 		}

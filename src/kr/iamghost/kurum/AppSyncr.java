@@ -27,8 +27,11 @@ public class AppSyncr implements ProcessWatcherListener {
 	}
 	
 	public void syncAllApps() {
-		for (AppConfig app : appConfigs.values()) {
-			syncApp(app, false);
+		if (dropbox.isLinked() == true)
+		{
+			for (AppConfig app : appConfigs.values()) {
+				syncApp(app, false);
+			}
 		}
 	}
 	
@@ -72,7 +75,11 @@ public class AppSyncr implements ProcessWatcherListener {
 				AppConfig tempConfig;
 				configParser.parse(singleFile.getAbsolutePath());
 				tempConfig = configParser.getAppConfig();
-				appConfigs.put(tempConfig.getProcessName(), tempConfig);
+				if (tempConfig != null)
+				{
+					appConfigs.put(tempConfig.getProcessName(), tempConfig);
+				}
+					
 			}
 		}
 	}

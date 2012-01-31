@@ -17,6 +17,7 @@ public class Environment {
 		}
 		else if (SystemUtils.IS_OS_MAC_OSX) {
 			APPDATA = appDataDir +"/Library/Application Support";
+			APPDATA_LOCAL = APPDATA;
 		}
 		
 		VERSION = "1.0";

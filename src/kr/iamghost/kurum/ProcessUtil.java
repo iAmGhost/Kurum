@@ -15,7 +15,7 @@ public class ProcessUtil {
 		String processString = "tasklist";
 		
 		if (!SystemUtils.IS_OS_WINDOWS)
-			processString = "ps ux";
+			processString = "ps -ax";
 		
 		try {
 			runtime = Runtime.getRuntime();

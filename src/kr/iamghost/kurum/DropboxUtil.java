@@ -25,6 +25,7 @@ public class DropboxUtil {
 	private DropboxAPI<WebAuthSession> client;
 	private WebAuthSession session;
 	private PropertyUtil config;
+	private boolean loggedIn = false;
 	
 	public DropboxUtil() {
 		config = new PropertyUtil().loadDefaultFile();
@@ -137,14 +138,16 @@ public class DropboxUtil {
 		String auth_key = config.getString("oauth_key");
 		String auth_secret = config.getString("oauth_secret");
 		
-		if (auth_key != null && auth_secret != null) {
+		if (!auth_key.equals("") && !auth_secret.equals("")) {
 			AccessTokenPair tokens = new AccessTokenPair(auth_key, auth_secret);
 			session.setAccessTokenPair(tokens);
+			loggedIn = true;
 		}
 	}
 	
 	public boolean isLinked() {
-		return session.isLinked();
+		if (session.isLinked() && loggedIn) return true;
+		return false;
 	}
 	
 	public Account getAccountInfo() {
