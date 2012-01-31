@@ -1,7 +1,12 @@
 package kr.iamghost.kurum.ui;
 
+import kr.iamghost.kurum.AppSyncr;
 import kr.iamghost.kurum.Environment;
+import kr.iamghost.kurum.Global;
+import kr.iamghost.kurum.GlobalEvent;
+import kr.iamghost.kurum.GlobalEventListener;
 import kr.iamghost.kurum.Language;
+import kr.iamghost.kurum.Log;
 import kr.iamghost.kurum.PropertyUtil;
 
 import org.apache.commons.lang3.SystemUtils;
@@ -16,13 +21,16 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolTip;
 import org.eclipse.swt.widgets.Tray;
 import org.eclipse.swt.widgets.TrayItem;
 
-public class MainWindow extends Window{
-	private PropertyUtil appConfig;
+public class MainWindow extends Window implements GlobalEventListener{
+	private PropertyUtil kurumConfig;
+	private AppSyncr appSyncr;
+	
 	protected boolean quit;
 	protected boolean isFirstLaunch;
 	
@@ -121,12 +129,36 @@ public class MainWindow extends Window{
 			public void shellIconified(ShellEvent e) {}
 		});
 		
-		appConfig = new PropertyUtil().loadDefaultFile();
+		Global.addEventlistener(this);
 		
-		if (!appConfig.getString("isFirstLaunch").equals("false")) {
-			appConfig.setString("isFirstLaunch", "false");
-			appConfig.save();
+		kurumConfig = new PropertyUtil().loadDefaultFile();
+		appSyncr = new AppSyncr();
+		appSyncr.init();
+		
+		checkDefaultLaunch();
+	}
+	
+	public void loop() {
+		if (Global.getString("LastError") != null) {
+			Log.write("HolyShit");
+		}
+	}
+	
+	public void checkDefaultLaunch() {
+		if (!kurumConfig.getString("isFirstLaunch").equals("false")) {
+			kurumConfig.setString("isFirstLaunch", "false");
+			kurumConfig.save();
 			isFirstLaunch = true;
+		}
+	}
+
+	@Override
+	public void onGlobalSet(GlobalEvent e) {
+		if (e.getEventKey().equals("DropboxLoginError") && e.getBool()) {
+			MessageBox msg = new MessageBox(getShell(), SWT.ICON_INFORMATION | SWT.OK);
+			msg.setMessage(Language.getString("NeedDropboxLogin"));
+			msg.open();
+			new DropboxLoginWindow(getDisplay()).open();
 		}
 	}
 }

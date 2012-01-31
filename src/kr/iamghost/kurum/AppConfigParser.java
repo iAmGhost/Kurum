@@ -5,8 +5,7 @@ import java.io.IOException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import kr.iamghost.kurum.Environment.Platform;
-
+import org.apache.commons.lang3.SystemUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -98,17 +97,15 @@ public class AppConfigParser extends DefaultHandler {
 		}
 	}
 	
-	public void parse(String filePath, Platform platform) {
-		switch (platform) {
-		case WINDOWS:
+	public void parse(String filePath) {
+		if (SystemUtils.IS_OS_WINDOWS) {
 			platformString = "Windows";
-			break;
-		case MAC:
+		}
+		else if (SystemUtils.IS_OS_MAC) {
 			platformString = "Mac";
-			break;
-		case LINUX:
+		}
+		else if (SystemUtils.IS_OS_LINUX) {
 			platformString = "Linux";
-			break;
 		}
 		
 		try {
@@ -126,7 +123,9 @@ public class AppConfigParser extends DefaultHandler {
 	
 	public AppConfig getAppConfig() {
 		if (status == Status.FINALIZE)
+		{
 			return tempConfig;
+		}
 		
 		return null;
 	}

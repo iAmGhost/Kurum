@@ -4,8 +4,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Timer;
+import java.util.TimerTask;
 
-import javax.swing.Timer;
 import javax.swing.event.EventListenerList;
 
 public class ProcessWatcher implements ActionListener {
@@ -16,14 +17,20 @@ public class ProcessWatcher implements ActionListener {
 	
 	
 	public void start(int delay) {
-		stop();
-		timer = new Timer(delay, this);
-		timer.start();
+		timer = new Timer();
+		timer.scheduleAtFixedRate(new TimerTask() {
+			
+			@Override
+			public void run() {
+				checkProcesses();
+				
+			}
+		}, 0, delay);
 	}
 	
 	public void stop() {
 		if (timer != null) {
-			timer.stop();
+			timer.cancel();
 			timer = null;
 		}
 	}

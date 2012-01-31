@@ -40,4 +40,8 @@ public class AppConfig {
 	public void setAppTitle(String appTitle) {
 		this.appTitle = appTitle;
 	}
+	
+	public String getLastSyncPath() {
+		return "/Apps/" + appName + "/.lastsync";
+	}
 }

@@ -11,7 +11,7 @@ import java.util.Properties;
 public class PropertyUtil {
 	private Properties property = null;
 	private String propertyFilePath = null;
-	
+
 	protected void init(InputStream is) throws IOException {
 		property = new Properties();
 		property.load(is);
@@ -21,6 +21,7 @@ public class PropertyUtil {
 		loadFile(propertyFilePath = Environment.APPDATA + "/Kurum/Kurum.properties");
 		return this;
 	}
+
 	public PropertyUtil loadLocalFile(String path) {
 		try {
 			InputStream is = getClass().getResourceAsStream(path);

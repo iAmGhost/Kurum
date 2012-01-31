@@ -1,12 +1,17 @@
 package kr.iamghost.kurum;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 
 import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.DropboxAPI.Account;
+import com.dropbox.client2.DropboxAPI.DropboxFileInfo;
 import com.dropbox.client2.DropboxAPI.Entry;
 import com.dropbox.client2.exception.DropboxException;
+import com.dropbox.client2.exception.DropboxUnlinkedException;
 import com.dropbox.client2.session.AccessTokenPair;
 import com.dropbox.client2.session.AppKeyPair;
 import com.dropbox.client2.session.RequestTokenPair;
@@ -35,11 +40,17 @@ public class DropboxUtil {
 		loadSavedKeys();
 	}
 	
-	public Entry getMetadata(String path, int fileLimit, String hash, boolean list, String rev) {
-		Entry entry = null;
+	public DropboxEntry getMetadata(String path) {
+		return getMetadata(path, 0, null, true, null);
+	}
+	
+	
+	public DropboxEntry getMetadata(String path, int fileLimit, String hash, boolean list, String rev) {
+		DropboxEntry entry = new DropboxEntry();
 		
 		try {
-			entry = client.metadata(path, fileLimit, hash, list, rev);
+			Entry newEntry = client.metadata(path, fileLimit, hash, list, rev);
+			entry.setEntry(newEntry);
 		}
 		catch (DropboxException e) {
 			e.printStackTrace();
@@ -48,23 +59,77 @@ public class DropboxUtil {
 		return entry;
 	}
 	
-	public Entry upload(String path, String destPath) {
-		return upload(path, destPath, null);
+	public DropboxEntry upload(String path, String destPath, boolean overwrite) {
+		return upload(path, destPath, null, overwrite);
 	}
 	
-	public Entry upload(String path, String destPath, String rev) {
-		Entry result = null;
+	public DropboxEntry upload(String path, String destPath, String rev, boolean overwrite) {
+		DropboxEntry result = new DropboxEntry();
 
 		try {
 			File file = new File(path);
 			FileInputStream is = new FileInputStream(file);
-			result = client.putFile(path, is, file.length(), rev, null);
+			Entry newEntry;
+			if (!overwrite)
+				newEntry = client.putFile(destPath, is, file.length(), rev, null);
+			else
+				newEntry = client.putFileOverwrite(destPath, is, file.length(), null);
+			
+			result.setEntry(newEntry);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
 		
 		return result;
+	}
+	
+	public DropboxFileInfo download(String path, String destPath) {
+		return download(path, destPath, null);
+	}
+	
+	public DropboxFileInfo download(String path, String destPath, String rev) {
+		DropboxFileInfo fileInfo = null;
+		try {
+			File file = new File(destPath);
+			File folder = file.getParentFile();
+			
+			if (!folder.isDirectory()) {
+				folder.mkdirs();
+			}
+			FileOutputStream os = new FileOutputStream(file, false);
+			
+			fileInfo = client.getFile(path, rev, os, null);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (DropboxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return fileInfo;
+		
+	}
+	
+	public DropboxEntry uploadText(String text, String destPath) {
+		DropboxEntry entry = new DropboxEntry();
+		ByteArrayInputStream inputStream = new ByteArrayInputStream(text.getBytes());
+		
+		try {
+		   Entry newEntry = client.putFileOverwrite(destPath, inputStream,
+				   text.length(), null);
+		   
+		   entry.setEntry(newEntry);
+		}
+		catch (DropboxUnlinkedException e) {
+			//
+		}
+		catch (DropboxException e) {
+			//
+		}
+		
+		return entry;
 	}
 	
 	public void loadSavedKeys() {
