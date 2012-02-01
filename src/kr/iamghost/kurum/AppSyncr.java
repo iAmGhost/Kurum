@@ -107,7 +107,7 @@ public class AppSyncr implements ProcessWatcherListener {
 			newZip.save();
 		}
 
-		DropboxEntry upload = dropbox.upload(tempZipFile.getAbsolutePath(),
+		DropboxEntry upload = dropbox.upload(new File(tempZipFile.getAbsolutePath()),
 				config.getDropboxZipPath(), true);
 		
 		saveSyncInfo(upload);

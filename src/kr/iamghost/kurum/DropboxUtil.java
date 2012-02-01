@@ -60,21 +60,20 @@ public class DropboxUtil {
 		return entry;
 	}
 	
-	public DropboxEntry upload(String path, String destPath, boolean overwrite) {
-		return upload(path, destPath, null, overwrite);
+	public DropboxEntry upload(File source, String destPath, boolean overwrite) {
+		return upload(source, destPath, null, overwrite);
 	}
 	
-	public DropboxEntry upload(String path, String destPath, String rev, boolean overwrite) {
+	public DropboxEntry upload(File source, String destPath, String rev, boolean overwrite) {
 		DropboxEntry result = new DropboxEntry();
 
 		try {
-			File file = new File(path);
-			FileInputStream is = new FileInputStream(file);
+			FileInputStream is = new FileInputStream(source);
 			Entry newEntry;
 			if (!overwrite)
-				newEntry = client.putFile(destPath, is, file.length(), rev, null);
+				newEntry = client.putFile(destPath, is, source.length(), rev, null);
 			else
-				newEntry = client.putFileOverwrite(destPath, is, file.length(), null);
+				newEntry = client.putFileOverwrite(destPath, is, source.length(), null);
 			
 			result.setEntry(newEntry);
 		}

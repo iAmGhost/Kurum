@@ -43,12 +43,16 @@ public class ZipUtil {
 	public void add(File file, String pathInZipFile) {
 		if (file.isFile()) {
 			ZipArchiveEntry entry = new ZipArchiveEntry(file, pathInZipFile);
+			entry.setSize(file.length());
+			entry.setTime(file.lastModified());
+			
 			try {
 				zos.putArchiveEntry(entry);
 				FileInputStream fis = new FileInputStream(file);
 				int bytesRead = 0;
 				
 				while((bytesRead = fis.read(buffer)) >= 0) {
+					Log.write(String.valueOf(bytesRead));
 					zos.write(buffer, 0, bytesRead);
 				}
 				

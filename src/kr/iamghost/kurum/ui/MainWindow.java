@@ -1,5 +1,7 @@
 package kr.iamghost.kurum.ui;
 
+import java.awt.SystemTray;
+
 import kr.iamghost.kurum.AppSyncr;
 import kr.iamghost.kurum.Environment;
 import kr.iamghost.kurum.Global;
@@ -30,9 +32,10 @@ import org.eclipse.swt.widgets.TrayItem;
 public class MainWindow extends Window implements GlobalEventListener{
 	private PropertyUtil kurumConfig;
 	private AppSyncr appSyncr;
+	private TrayItem trayItem;
+	private ToolTip toolTip;
 	
 	protected boolean quit;
-	protected boolean isFirstLaunch;
 	
 	public MainWindow(Display display) {
 		super(display);
@@ -51,10 +54,7 @@ public class MainWindow extends Window implements GlobalEventListener{
 	public void init() {
 		Shell shell = getShell();
 		shell.setText(Environment.KURUMTITLE);
-		
-		final ToolTip tip = new ToolTip(shell, SWT.BALLOON | SWT.ICON_INFORMATION);
-		tip.setMessage(Language.getString("TrayNotice"));
-		tip.setText(Environment.KURUMTITLE);
+		shell.setSize(400, 400);
 
 		final Tray tray = getDisplay().getSystemTray();
 		
@@ -62,10 +62,9 @@ public class MainWindow extends Window implements GlobalEventListener{
 		{
 			
 			Image image = getDisplay().getSystemImage(SWT.ICON_INFORMATION);
-			TrayItem item = new TrayItem(tray, SWT.NONE);
 			
-			item.setToolTip(tip);
-			item.setImage(image);
+			trayItem = new TrayItem(tray, SWT.NONE);
+			trayItem.setImage(image);
 			
 			final Menu menu = new Menu(getShell(), SWT.POP_UP);
 
@@ -91,7 +90,7 @@ public class MainWindow extends Window implements GlobalEventListener{
 			
 			//Double-clicking tray icon only for Windows
 			if (SystemUtils.IS_OS_WINDOWS) {
-				item.addListener(SWT.DefaultSelection, new Listener() {
+				trayItem.addListener(SWT.DefaultSelection, new Listener() {
 					@Override
 					public void handleEvent(Event event) {
 						showAndActive();
@@ -100,16 +99,12 @@ public class MainWindow extends Window implements GlobalEventListener{
 			}
 
 			
-			item.addMenuDetectListener(new MenuDetectListener() {
+			trayItem.addMenuDetectListener(new MenuDetectListener() {
 				@Override
 				public void menuDetected(MenuDetectEvent e) {
 					menu.setVisible(true);
 				}
 			});
-		}
-		else
-		{
-			tip.setLocation(100, 100);
 		}
 		
 		shell.addShellListener(new ShellListener() {
@@ -117,7 +112,6 @@ public class MainWindow extends Window implements GlobalEventListener{
 			public void shellActivated(ShellEvent e) {}
 			@Override
 			public void shellClosed(ShellEvent e) {
-				if (isFirstLaunch) tip.setVisible(true);
 				getShell().setVisible(false);
 				e.doit = quit;
 			}
@@ -132,10 +126,12 @@ public class MainWindow extends Window implements GlobalEventListener{
 		Global.addEventlistener(this);
 		
 		kurumConfig = new PropertyUtil().loadDefaultFile();
+		checkDefaultLaunch();
+		
 		appSyncr = new AppSyncr();
 		appSyncr.init();
 		
-		checkDefaultLaunch();
+
 	}
 	
 	public void loop() {
@@ -148,8 +144,24 @@ public class MainWindow extends Window implements GlobalEventListener{
 		if (!kurumConfig.getString("isFirstLaunch").equals("false")) {
 			kurumConfig.setString("isFirstLaunch", "false");
 			kurumConfig.save();
-			isFirstLaunch = true;
+			
+			ToolTip tip = new ToolTip(getShell(), SWT.BALLOON | SWT.ICON_INFORMATION);
+			tip.setMessage(Language.getString("TrayNotice"));
+			tip.setText(Environment.KURUMTITLE);
+			showTooltip(tip);
 		}
+	}
+	
+	public void showTooltip(ToolTip tip) {
+		if (SystemTray.isSupported()) {
+			trayItem.setToolTip(tip);
+		}
+		else
+		{
+			tip.setLocation(0, 0);
+		}
+		
+		tip.setVisible(true);
 	}
 
 	@Override
