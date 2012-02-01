@@ -236,6 +236,7 @@ public class AppSyncr implements ProcessWatcherListener {
 	}
 
 	public void extractFileFromZip(ZipFile zip, ZipArchiveEntry entry, String destPath) {
+		
 		try {
 			File file = new File(destPath);
 			File folder = file.getParentFile();
@@ -243,18 +244,15 @@ public class AppSyncr implements ProcessWatcherListener {
 			if (!folder.isDirectory()) {
 				folder.mkdirs();
 			}
-			if (!file.isFile()) {
-				file.createNewFile();
-			}
 			
 			InputStream is = zip.getInputStream(entry);
 			FileOutputStream os = new FileOutputStream(file);
-			byte[] buffer = new byte[4096];
-			int bytes_read;
 			
-			while ((bytes_read = is.read(buffer)) != -1) {
-				os.write(buffer, 0, bytes_read);
-			}
+			byte[] buffer = new byte[1024];
+			int bytes_read = 0;
+			
+			os.write(is.read());
+			
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -266,6 +264,7 @@ public class AppSyncr implements ProcessWatcherListener {
 		
 		while (entries.hasMoreElements()) {
 			ZipArchiveEntry entry = entries.nextElement();
+			Log.write(entry.getName());
 			
 			String newPath = path + "/" + entry.getName();
 			
