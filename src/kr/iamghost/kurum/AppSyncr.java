@@ -154,7 +154,7 @@ public class AppSyncr implements ProcessWatcherListener {
 		}
 		
 		DropboxEntry meta = dropbox.getMetadata(config.getDropboxZipPath());
-		//saveSyncInfo(meta);
+		saveSyncInfo(meta);
 	}
 	
 	
