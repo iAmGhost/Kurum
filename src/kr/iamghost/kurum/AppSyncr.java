@@ -1,16 +1,23 @@
 package kr.iamghost.kurum;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.regex.Matcher;
 
-import com.dropbox.client2.DropboxAPI.Entry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.compress.archivers.zip.ZipFile;
+
+import com.dropbox.client2.DropboxAPI.DropboxFileInfo;
 
 public class AppSyncr implements ProcessWatcherListener {
 	private final static int PROCESS_WATCH_PERIOD = 1000 * 5;
@@ -49,7 +56,6 @@ public class AppSyncr implements ProcessWatcherListener {
 			@Override
 			public void run() {
 				syncAllApps();
-				
 			}
 		}, 0, AUTOMATIC_SYNC_PERIOD);
 	}
@@ -92,97 +98,224 @@ public class AppSyncr implements ProcessWatcherListener {
 	public void uploadToDropbox(AppConfig config) {
 		Iterator<AppConfigFileEntry> it = config.getFilesIterator();
 		
+		String appName = config.getAppName();
+		
+		File zipFile = null;
+		ZipArchiveOutputStream zos = null;
+		
+		try {
+			zipFile = File.createTempFile(appName, ".zip");
+			zipFile.deleteOnExit();
+			zos = new ZipArchiveOutputStream(zipFile);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		while (it.hasNext()) {
-			AppConfigFileEntry fileEntry = it.next();
-			String originalPath = Environment.parsePath(fileEntry.getOriginalPath());
-			String dropboxPath = "/Apps/" + config.getAppName();
-			dropboxPath = dropboxPath + fileEntry.getDropboxPath();
-			dropboxPath = Environment.parsePath(dropboxPath);
+			AppConfigFileEntry fileInfo = it.next();
 			
-			File dir = new File(originalPath);
+
+			File file = new File(fileInfo.getOriginalPath());
 			
-			if (!fileEntry.isFile()) {
-				try {
-					List<File> files = FileListing.getFileListing(dir);
-					for (File file : files) {
-						String filePath = file.getAbsolutePath();
-						String fileName = filePath.replaceFirst(
-								Matcher.quoteReplacement(dir.getAbsolutePath()), "");
-						//Log.write(dropboxPath + fileName);
-						if (file.isFile())
-							dropbox.upload(filePath,
-									dropboxPath + Environment.parsePath(fileName), true);
-					}
-				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
+			if (file.isFile()) {
+				addFileToZip(zos, file, fileInfo.getDropboxPath());
 			}
-			else
-			{
-				if (dir.isFile())
-					dropbox.upload(originalPath, dropboxPath, true);
+			else {
+				addDirectoryToZip(zos, file, fileInfo.getDropboxPath());
 			}
 		}
-		String appName = config.getAppName();
-		String lastSyncPath = config.getLastSyncPath();
-		DropboxEntry lastSync = dropbox.uploadText(new Date().toString(), lastSyncPath);
-		kurumConfig.setString("date_" + appName, lastSync.modifydate.toString());
+		
+		try {
+			zos.closeArchiveEntry();
+			zos.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		DropboxEntry upload = dropbox.upload(zipFile.getAbsolutePath(),
+				config.getDropboxZipPath(), true);
+		
+		saveSyncInfo(upload);
 	}
 	
 	public void downloadToLocal(AppConfig config) {
 		Iterator<AppConfigFileEntry> it = config.getFilesIterator();
 		
-		while (it.hasNext()) {
-			AppConfigFileEntry fileEntry = it.next();
-			String originalPath = Environment.parsePath(fileEntry.getOriginalPath());
-			String dropboxPath = "/Apps/" + config.getAppName();
-			dropboxPath = dropboxPath + fileEntry.getDropboxPath();
-			dropboxPath = Environment.parsePath(dropboxPath);
-			
-			if (!fileEntry.isFile())
-			{
-				downloadFolderRecursive(dropboxPath, originalPath);
-			}
-			else
-			{
-				dropbox.download(dropboxPath, originalPath);
-			}
-		}
-		
 		String appName = config.getAppName();
-		String lastSyncPath = config.getLastSyncPath();
-		DropboxEntry lastSync = dropbox.getMetadata(lastSyncPath);
-		kurumConfig.setString("date_" + appName, lastSync.modifydate.toString());
+		
+		File tempFile = null;
+		ZipFile zipFile = null;
+		String tempZipPath = null;
+		DropboxFileInfo download = null;
+		
+		try {
+			tempFile = File.createTempFile(appName, ".zip");
+			tempZipPath = tempFile.getAbsolutePath();
+			tempFile.delete();
+			
+			download = dropbox.download(config.getDropboxZipPath(), tempZipPath);
+			
+			zipFile = new ZipFile(tempZipPath);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		while (it.hasNext()) {
+			AppConfigFileEntry fileInfo = it.next();
+			String tempFolder = Environment.parsePath("%Temp%/Kurum/" + appName + "/");
+			Util.deleteDirectory(new File(tempFolder));
+			
+			extractZip(zipFile, tempFolder);
+			
+			if (fileInfo.isFile()) {
+				File file = new File(tempFolder + fileInfo.getDropboxPath());
+				File destFile = new File(fileInfo.getOriginalPath());
+				destFile.mkdirs();
+				file.renameTo(destFile);
+			}
+			else {
+				copyDirectoryRecursively(tempFolder + fileInfo.getDropboxPath(),
+						fileInfo.getOriginalPath());
+			}
+		}
+		
+		try {
+			zipFile.close();
+			new File(tempZipPath).delete();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		DropboxEntry meta = dropbox.getMetadata(config.getDropboxZipPath());
+		saveSyncInfo(meta);
 	}
 	
-	public void downloadFolderRecursive(String path, String savePath) {
-		DropboxEntry meta = dropbox.getMetadata(path);
-		List<Entry> entries = meta.getEntry().contents;
+	private void copyDirectoryRecursively(String dir, String dest) {
+		File destDirectory = new File(dir);
+		if (destDirectory.isDirectory()) Util.deleteDirectory(destDirectory);
 		
-		for (Entry entry : entries) {
-			String destPath = "";
-			
-			if (entry.isDir)
-			{
-				destPath = savePath + entry.path.replace(path, "");
-				downloadFolderRecursive(entry.path, destPath);
+		File directory = new File(dir);
+		
+		File[] files = directory.listFiles();
+		
+		for (File file : files) {
+			String newDir = dir + "/" + file.getName();
+			String filePath = dest + "/" + file.getName();
+
+			if (file.isDirectory()) {
+				copyDirectoryRecursively(newDir, filePath);
 			}
 			else
 			{
-				destPath = savePath + "/" + entry.path.replace(path, "");
-				dropbox.download(entry.path, destPath);
+				File destFile = new File(filePath);
+				destFile.getParentFile().mkdirs();
+				if (destFile.isFile()) destFile.delete();
+
+				try {
+				    FileReader in = new FileReader(file);
+				    FileWriter out = new FileWriter(destFile);
+					int c;
+	
+				    while ((c = in.read()) != -1)
+				      out.write(c);
+	
+				    in.close();
+				    out.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	public void extractFileFromZip(ZipFile zip, ZipArchiveEntry entry, String destPath) {
+		try {
+			File file = new File(destPath);
+			File folder = file.getParentFile();
+			
+			if (!folder.isDirectory()) {
+				folder.mkdirs();
+			}
+			if (!file.isFile()) {
+				file.createNewFile();
+			}
+			
+			InputStream is = zip.getInputStream(entry);
+			FileOutputStream os = new FileOutputStream(file);
+			byte[] buffer = new byte[4096];
+			int bytes_read;
+			
+			while ((bytes_read = is.read(buffer)) != -1) {
+				os.write(buffer, 0, bytes_read);
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void extractZip(ZipFile zip, String path) {
+		Enumeration<ZipArchiveEntry> entries = zip.getEntries();
+		
+		while (entries.hasMoreElements()) {
+			ZipArchiveEntry entry = entries.nextElement();
+			
+			String newPath = path + "/" + entry.getName();
+			
+			if (entry.isDirectory()) {
+				extractZip(zip, newPath);
+			}
+			else {
+				extractFileFromZip(zip, entry, newPath);
 			}
 		}
 	}
 	
+	public void addFileToZip(ZipArchiveOutputStream zos, File file, String name) {
+		ZipArchiveEntry entry = new ZipArchiveEntry(file, name);
+		
+		try {
+			zos.putArchiveEntry(entry);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void addDirectoryToZip(ZipArchiveOutputStream zos, File dir, String name) {
+		File[] files = dir.listFiles();
+		
+		for (File file : files) {
+			String fileName = name + "/" + file.getName();
+			
+			if (file.isDirectory()) {
+				addDirectoryToZip(zos, file, fileName);
+			}
+			else
+			{
+				addFileToZip(zos, file, fileName);
+			}
+		}
+	}
+	
+	public void saveSyncInfo(DropboxEntry entry) {
+		kurumConfig.setString(entry.fileName, entry.modifydate.toString());
+		kurumConfig.save();
+	}
+
 	public void syncApp(AppConfig config, boolean force) {
 		if (config != null) {
 			String appName = config.getAppName();
-			String lastSyncPath = config.getLastSyncPath();
-			Date localDate = Util.stringToDate(kurumConfig.getString("date_" + appName));
-			DropboxEntry lastSync = dropbox.getMetadata(lastSyncPath);
+			String archivePath = config.getDropboxZipPath();
+			Date localDate = Util.stringToDate(kurumConfig.getString(appName + ".zip"));
+			
+			DropboxEntry lastSync = dropbox.getMetadata(archivePath);
 			
 			if (!lastSync.isValid || lastSync.isDeleted) {
 				//First upload->Upload

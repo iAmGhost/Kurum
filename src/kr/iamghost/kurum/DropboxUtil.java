@@ -54,7 +54,7 @@ public class DropboxUtil {
 			entry.setEntry(newEntry);
 		}
 		catch (DropboxException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		
 		return entry;

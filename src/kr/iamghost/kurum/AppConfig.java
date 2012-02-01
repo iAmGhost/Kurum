@@ -40,8 +40,8 @@ public class AppConfig {
 	public void setAppTitle(String appTitle) {
 		this.appTitle = appTitle;
 	}
-	
-	public String getLastSyncPath() {
-		return "/Apps/" + appName + "/.lastsync";
+
+	public String getDropboxZipPath() {
+		return "/Data/" + appName + ".zip";
 	}
 }

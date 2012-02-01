@@ -14,6 +14,7 @@ public class DropboxEntry {
 	public boolean isDir = false;
 	public boolean isValid = false;
 	public boolean isDeleted = false;
+	public String fileName = "";
 	
 	public DropboxEntry() {
 		
@@ -33,6 +34,7 @@ public class DropboxEntry {
 			size = entry.size;
 			bytes = entry.bytes;
 			isDir = entry.isDir;
+			fileName = entry.fileName();
 		}
 	}
 	

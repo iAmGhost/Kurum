@@ -1,5 +1,6 @@
 package kr.iamghost.kurum;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,5 +21,21 @@ public class Util {
 			//e.printStackTrace();
 		}
 		return newDate;
+	}
+	
+	public static boolean deleteDirectory(File path) {
+		if( path.exists() ) {
+			File[] files = path.listFiles();
+			
+			for(int i=0; i<files.length; i++) {
+				if(files[i].isDirectory()) {
+					deleteDirectory(files[i]);
+				}
+				else {
+					files[i].delete();
+				}
+			}
+		}
+		return(path.delete());
 	}
 }

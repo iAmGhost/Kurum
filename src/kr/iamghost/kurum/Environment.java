@@ -1,8 +1,11 @@
 package kr.iamghost.kurum;
 
+import java.util.ArrayList;
+
 import org.apache.commons.lang3.SystemUtils;
 
 public class Environment {
+	public static ArrayList<EnvironmentVariable> envVars;
 	public static String APPDATA;
 	public static String APPDATA_LOCAL;
 	public static String VERSION;
@@ -22,12 +25,24 @@ public class Environment {
 		
 		VERSION = "1.0";
 		KURUMTITLE = "Kurum " + VERSION;
+		
+		envVars = new ArrayList<EnvironmentVariable>();
+		addVariable("LocalAppData", APPDATA_LOCAL);
+		addVariable("AppData", APPDATA);
+		addVariable("Temp", parsePath(System.getProperty("java.io.tmpdir").toString()));
+	}
+	
+	public static void addVariable(String name, String value) {
+		envVars.add(new EnvironmentVariable("%" + name + "%", value));
 	}
 	
 	public static String parsePath(String path) {
 		path = path.replaceAll("\\\\", "/");
-		path = path.replaceAll("%LocalAppData%", APPDATA_LOCAL);
-		path = path.replaceAll("%AppData%", APPDATA);
+		
+		for (EnvironmentVariable ev : envVars) {
+			path = path.replaceAll(ev.getName(), ev.getValue());
+		}
+
 		return path;
 	}
 }

@@ -21,7 +21,7 @@ public class AppConfigParser extends DefaultHandler {
 	private AppConfigFileEntry tempFileEntry;
 	private String platformString;
 	private String tempString;
-	private boolean ignore = false;
+	private boolean found = false;
 	
 	public AppConfigParser() {
 		SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -62,19 +62,22 @@ public class AppConfigParser extends DefaultHandler {
 		}
 		else if (qName.equalsIgnoreCase("entry")) {
 			if (attributes.getValue("os").equalsIgnoreCase(platformString))
-				this.ignore = false;
+			{
+				this.found = true;
+				tempConfig.setProcess(attributes.getValue("process"));
+				status = Status.ENTRY;
+			}
 			else
-				this.ignore = true;
-			
-			tempConfig.setProcess(attributes.getValue("process"));
-			status = Status.ENTRY;
+			{
+				this.found = false;
+			}
 		}
-		else if (qName.equalsIgnoreCase("file")) {
+		else if (qName.equalsIgnoreCase("file") && found) {
 			tempFileEntry = new AppConfigFileEntry();
 			tempFileEntry.setDropboxPath(attributes.getValue("dropboxPath"));
 			status = Status.FILE;
 		}
-		else if (qName.equalsIgnoreCase("dir")) {
+		else if (qName.equalsIgnoreCase("dir") && found) {
 			tempFileEntry = new AppConfigFileEntry();
 			tempFileEntry.setDropboxPath(attributes.getValue("dropboxPath"));
 			tempFileEntry.setIsFile(false);
@@ -104,8 +107,7 @@ public class AppConfigParser extends DefaultHandler {
 	}
 	
 	public void endElement(String uri, String localName, String qName) throws SAXException {
-		if (qName.equalsIgnoreCase("entry")) {
-			if (!ignore)
+		if (qName.equalsIgnoreCase("entry") && found) {
 				tempConfig.addFile(tempFileEntry);
 		}
 		else if(qName.equalsIgnoreCase("AppConfig")) {
@@ -129,11 +131,7 @@ public class AppConfigParser extends DefaultHandler {
 	}
 	
 	public AppConfig getAppConfig() {
-		if (status == Status.FINALIZE && !this.ignore)
-		{
-			return tempConfig;
-		}
 		
-		return null;
+		return tempConfig;
 	}
 }
