@@ -85,20 +85,16 @@ public class DropboxUtil {
 		return result;
 	}
 	
-	public DropboxFileInfo download(String path, String destPath) {
-		return download(path, destPath, null);
+	public DropboxFileInfo download(String path, File dest) {
+		return download(path, dest, null);
 	}
 	
-	public DropboxFileInfo download(String path, String destPath, String rev) {
+	public DropboxFileInfo download(String path, File dest, String rev) {
 		DropboxFileInfo fileInfo = null;
 		try {
-			File file = new File(destPath);
-			File folder = file.getParentFile();
+			dest.mkdirs();
 			
-			if (!folder.isDirectory()) {
-				folder.mkdirs();
-			}
-			FileOutputStream os = new FileOutputStream(file, false);
+			FileOutputStream os = new FileOutputStream(dest, false);
 			
 			fileInfo = client.getFile(path, rev, os, null);
 		} catch (FileNotFoundException e) {
