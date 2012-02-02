@@ -81,6 +81,7 @@ public class AppConfigParser extends DefaultHandler {
 			tempFileEntry = new AppConfigFileEntry();
 			tempFileEntry.setDropboxPath(attributes.getValue("dropboxPath"));
 			tempFileEntry.setIsFile(false);
+			tempFileEntry.setExcludeList(attributes.getValue("excludes"));
 			status = Status.DIR;
 		}
 	}

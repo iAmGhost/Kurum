@@ -1,11 +1,27 @@
 package kr.iamghost.kurum;
 
 import java.io.File;
+import java.util.ArrayList;
 
 public class AppConfigFileEntry {
 	private String originalPath;
 	private String dropboxPath;
+	private ArrayList<String> excludeList = new ArrayList<String>();
 	private boolean isFile = true;
+	
+	public void setExcludeList(String value) {
+		if (value == null) return ;
+		
+		String[] list = value.split(";");
+		
+		for (String excludeFile : list) {
+			excludeList.add(excludeFile);
+		}
+	}
+	
+	public ArrayList<String> getExcludeList() {
+		return excludeList;
+	}
 	
 	public AppConfigFileEntry() {
 		

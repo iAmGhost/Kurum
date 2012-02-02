@@ -15,7 +15,6 @@ public class ProcessWatcher implements ActionListener {
 	private EventListenerList eventList = new EventListenerList();
 	private Timer timer;
 	
-	
 	public void start(int delay) {
 		timer = new Timer();
 		timer.scheduleAtFixedRate(new TimerTask() {
@@ -33,6 +32,10 @@ public class ProcessWatcher implements ActionListener {
 			timer.cancel();
 			timer = null;
 		}
+	}
+	
+	public boolean foundAtLeastOneProcess() {
+		return !appearedList.isEmpty();
 	}
 	
 	public void checkProcesses() {

@@ -26,7 +26,10 @@ public class AppConfig {
 	}
 	
 	public void addFile(AppConfigFileEntry file) {
-		files.add(file);
+		boolean found = false;
+		
+		if (!found)
+			files.add(file);
 	}
 	
 	public Iterator<AppConfigFileEntry> getFilesIterator() {

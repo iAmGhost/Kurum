@@ -31,11 +31,17 @@ public class AppSyncr implements ProcessWatcherListener {
 		}
 	}
 	
+	public void timedSync() {
+		if (!processWatcher.foundAtLeastOneProcess())
+			syncAllApps();
+	}
+	
 	public void init() {
 		refreshAppConfigs();
 		refreshProcessWatcher();
 		kurumConfig = new PropertyUtil().loadDefaultFile();
 		startTimedSync();
+		syncAllApps();
 	}
 	
 	public void startTimedSync() {
@@ -44,9 +50,9 @@ public class AppSyncr implements ProcessWatcherListener {
 			
 			@Override
 			public void run() {
-				syncAllApps();
+				timedSync();
 			}
-		}, 0, AUTOMATIC_SYNC_PERIOD);
+		}, AUTOMATIC_SYNC_PERIOD, AUTOMATIC_SYNC_PERIOD);
 	}
 	
 	public void refreshProcessWatcher() {
@@ -102,8 +108,8 @@ public class AppSyncr implements ProcessWatcherListener {
 		
 		while (it.hasNext()) {
 			AppConfigFileEntry fileInfo = it.next();
-			
-			newZip.add(new File(fileInfo.getOriginalPath()), fileInfo.getDropboxPath());
+
+			newZip.add(fileInfo);
 			newZip.save();
 		}
 

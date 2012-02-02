@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
@@ -40,31 +41,47 @@ public class ZipUtil {
 		return this;
 	}
 	
-	public void add(File file, String pathInZipFile) {
+	public void add(AppConfigFileEntry fileEntry) {
+		add(new File(fileEntry.getOriginalPath()), fileEntry.getDropboxPath(),
+				fileEntry.getExcludeList());
+	}
+	
+	public void add(File file, String pathInZipFile, ArrayList<String> excludes) {
 		if (file.isFile()) {
-			ZipArchiveEntry entry = new ZipArchiveEntry(file, pathInZipFile);
-			entry.setSize(file.length());
-			entry.setTime(file.lastModified());
 			
-			try {
-				zos.putArchiveEntry(entry);
-				FileInputStream fis = new FileInputStream(file);
-				int bytesRead = 0;
-				
-				while((bytesRead = fis.read(buffer)) >= 0) {
-					Log.write(String.valueOf(bytesRead));
-					zos.write(buffer, 0, bytesRead);
+			boolean excludeFound = false;
+			
+			for (String exclude : excludes) {
+				if (file.getAbsolutePath().contains(exclude)) {
+					excludeFound = true;
+					break;
 				}
+			}
+			
+			if (!excludeFound) {
+				ZipArchiveEntry entry = new ZipArchiveEntry(file, pathInZipFile);
+				entry.setSize(file.length());
+				entry.setTime(file.lastModified());
 				
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				try {
+					zos.putArchiveEntry(entry);
+					FileInputStream fis = new FileInputStream(file);
+					int bytesRead = 0;
+					
+					while((bytesRead = fis.read(buffer)) >= 0) {
+						zos.write(buffer, 0, bytesRead);
+					}
+					
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 		else {
 			File[] files = file.listFiles();
 			for (File innerFile : files) {
-				add(innerFile, pathInZipFile + "/" + innerFile.getName());
+				add(innerFile, pathInZipFile + "/" + innerFile.getName(), excludes);
 			}
 		}
 	}

@@ -27,6 +27,8 @@ public class FileUtil {
 				FileOutputStream fos = new FileOutputStream(dest);
 				
 				fos.getChannel().transferFrom(fis.getChannel(), 0, source.length());
+				dest.setWritable(true);
+				dest.setReadable(true);
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
