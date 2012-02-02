@@ -21,14 +21,20 @@ public class FileUtil {
 	public static void copy(File source, File dest) {
 		if (source.isFile()) {
 			try {
+				if (dest.isFile()) dest.delete();
+				
 				dest.getParentFile().mkdirs();
 				
 				FileInputStream fis = new FileInputStream(source);
 				FileOutputStream fos = new FileOutputStream(dest);
 				
-				fos.getChannel().transferFrom(fis.getChannel(), 0, source.length());
-				dest.setWritable(true);
-				dest.setReadable(true);
+				int bytesRead = 0;
+				byte[] buffer = new byte[4096];
+				
+				while ((bytesRead = fis.read(buffer)) >= 0) {
+					fos.write(buffer, 0, bytesRead);
+				}
+				
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -110,8 +110,9 @@ public class AppSyncr implements ProcessWatcherListener {
 			AppConfigFileEntry fileInfo = it.next();
 
 			newZip.add(fileInfo);
-			newZip.save();
 		}
+		
+		newZip.save();
 
 		DropboxEntry upload = dropbox.upload(new File(tempZipFile.getAbsolutePath()),
 				config.getDropboxZipPath(), true);
@@ -124,7 +125,8 @@ public class AppSyncr implements ProcessWatcherListener {
 		
 		String appName = config.getAppName();
 
-		File tempFile;
+		File tempFile = null;
+		File tempDirectory = null;
 		ZipUtil zip = null;
 		
 		try {
@@ -142,7 +144,7 @@ public class AppSyncr implements ProcessWatcherListener {
 			AppConfigFileEntry fileInfo = it.next();
 			
 			try {
-				File tempDirectory = File.createTempFile("Kurum", "");
+				tempDirectory = File.createTempFile("Kurum", "");
 				tempDirectory.delete();
 				tempDirectory.deleteOnExit();
 				
@@ -150,7 +152,9 @@ public class AppSyncr implements ProcessWatcherListener {
 				
 				String tempPath = tempDirectory.getAbsolutePath() + "/" + fileInfo.getDropboxPath();
 				
-				FileUtil.delete(fileInfo.getOriginalFile());
+				if (fileInfo.isNeedCleanup())
+					FileUtil.delete(fileInfo.getOriginalFile());
+				
 				FileUtil.copy(new File(tempPath), fileInfo.getOriginalFile());
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
@@ -158,6 +162,9 @@ public class AppSyncr implements ProcessWatcherListener {
 			}
 			
 		}
+		
+		FileUtil.delete(tempFile);
+		FileUtil.delete(tempDirectory);
 		
 		DropboxEntry meta = dropbox.getMetadata(config.getDropboxZipPath());
 		saveSyncInfo(meta);

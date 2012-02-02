@@ -7,6 +7,7 @@ public class AppConfigFileEntry {
 	private String originalPath;
 	private String dropboxPath;
 	private ArrayList<String> excludeList = new ArrayList<String>();
+	private boolean needCleanup = false;
 	private boolean isFile = true;
 	
 	public void setExcludeList(String value) {
@@ -58,6 +59,14 @@ public class AppConfigFileEntry {
 
 	public void setIsFile(boolean isFile) {
 		this.isFile = isFile;
+	}
+
+	public boolean isNeedCleanup() {
+		return needCleanup;
+	}
+
+	public void setNeedCleanup(boolean needCleanup) {
+		this.needCleanup = needCleanup;
 	}
 
 }
