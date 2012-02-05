@@ -139,7 +139,7 @@ public class AppConfigParser extends DefaultHandler {
 	}
 	
 	public void endElement(String uri, String localName, String qName) throws SAXException {
-		if (qName.equalsIgnoreCase("entry") && found) {
+		if ((qName.equalsIgnoreCase("dir") || qName.equalsIgnoreCase("file")) && found) {
 			tempConfig.addFile(tempFileEntry);
 		}
 		else if(qName.equalsIgnoreCase("var") && found) {
