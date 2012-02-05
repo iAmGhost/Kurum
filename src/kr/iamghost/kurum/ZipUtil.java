@@ -42,7 +42,6 @@ public class ZipUtil {
 	}
 	
 	public void add(AppConfigFileEntry fileEntry) {
-		Log.write(fileEntry.getOriginalFile().getAbsolutePath());
 		add(new File(fileEntry.getOriginalPath()), fileEntry.getDropboxPath(),
 				fileEntry.getExcludeList());
 	}

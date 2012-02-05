@@ -109,20 +109,22 @@ public class AppSyncr implements ProcessWatcherListener {
 			e.printStackTrace();
 		}
 		
-		ZipUtil newZip = new ZipUtil().createZip(tempZipFile);
-		
-		while (it.hasNext()) {
-			AppConfigFileEntry fileInfo = it.next();
+		if (tempZipFile != null) {
+			ZipUtil newZip = new ZipUtil().createZip(tempZipFile);
+			
+			while (it.hasNext()) {
+				AppConfigFileEntry fileInfo = it.next();
+				newZip.add(fileInfo);
+			}
+			
+			newZip.save();
 
-			newZip.add(fileInfo);
+			DropboxEntry upload = dropbox.upload(new File(tempZipFile.getAbsolutePath()),
+					config.getDropboxZipPath(), true);
+			
+			saveSyncInfo(upload);
+			
 		}
-		
-		newZip.save();
-
-		DropboxEntry upload = dropbox.upload(new File(tempZipFile.getAbsolutePath()),
-				config.getDropboxZipPath(), true);
-		
-		saveSyncInfo(upload);
 	}
 	
 	public void downloadToLocal(AppConfig config) {

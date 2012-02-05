@@ -156,9 +156,9 @@ public class AppConfigManagerWindow extends Window {
 		dlg.setFilterExtensions(filter);
 		
 		String path = dlg.open();
-		
-		File configFile = new File(path);
-		if (configFile.isFile()) {
+
+		if (path != null) {
+			File configFile = new File(path);
 			AppConfigParser parser = new AppConfigParser();
 			parser.parse(path);
 			
@@ -218,9 +218,10 @@ public class AppConfigManagerWindow extends Window {
 					appConfigCombo.add(newConfig.getAppTitle());
 				}
 			}
-			
-			appConfigCombo.select(0);
-			onAppConfigListSelected(0);
+			if (appConfigCombo.getItemCount() > 0) {
+				appConfigCombo.select(0);
+				onAppConfigListSelected(0);	
+			}
 		}
 	}
 }

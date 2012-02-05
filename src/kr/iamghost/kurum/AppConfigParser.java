@@ -151,7 +151,6 @@ public class AppConfigParser extends DefaultHandler {
 	}
 	
 	public void parse(String filePath) {
-		
 		try {
 			this.filePath = filePath;
 			parser.parse(filePath, this);
