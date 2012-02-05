@@ -256,7 +256,10 @@ public class MainWindow extends Window implements GlobalEventListener{
 			handleVariableNotFoundError(var);
 		}
 		else if (e.getEventKey().equals("MessageBox")) {
-			MessageBox msg = new MessageBox(getShell(), SWT.ICON_INFORMATION | SWT.OK);
+			Shell shell = (Shell)Global.getObject("LastShell");
+			if (shell == null) shell = getShell();
+			
+			MessageBox msg = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
 			msg.setText(Environment.KURUMTITLE);
 			msg.setMessage(e.getString());
 			msg.open();

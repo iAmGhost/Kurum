@@ -170,6 +170,7 @@ public class AppConfigManagerWindow extends Window {
 				File targetFile = new File(Environment.KURUM + "/AppConfigs/" + configFile.getName());
 				FileUtil.copy(configFile, targetFile);
 				success = true;
+				Global.setObject("LastShell", getShell());
 				Global.set("MessageBox",
 						Language.getFormattedString("AppConfigImported", tempConfig.getAppTitle()));
 				onClickRefreshAppConfigsButton();
@@ -177,6 +178,7 @@ public class AppConfigManagerWindow extends Window {
 		}
 		
 		if (!success)
+			Global.setObject("LastShell", getShell());
 			Global.set("MessageBox", Language.getString("ConfigImportFailed"));
 			
 	}

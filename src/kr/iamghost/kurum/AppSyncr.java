@@ -37,8 +37,6 @@ public class AppSyncr implements ProcessWatcherListener {
 		}
 	}
 	
-	
-	
 	public void timedSync() {
 		if (!processWatcher.foundAtLeastOneProcess())
 			syncAllApps();
