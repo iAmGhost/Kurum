@@ -1,6 +1,9 @@
 package kr.iamghost.kurum;
 
+import java.awt.Desktop;
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -26,18 +29,14 @@ public class Util {
 	}
 	
 	public static void browseDirectory(String path) {
+	    File file = new File(path);
+	    if (!file.isDirectory()) file.mkdirs();
+	    
 	    try {
-			if (SystemUtils.IS_OS_WINDOWS) {
-				Runtime.getRuntime().exec("explorer.exe \"" +
-						path.replaceAll("/", "\\\\") + "\"");
-			}
-			else {
-				Runtime.getRuntime().exec("/usr/bin/open \"" + path + "\"");
-			}
+			Desktop.getDesktop().open(file);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}  
-	    
+		}
 	}
 }
