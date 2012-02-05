@@ -30,14 +30,10 @@ public class AppSyncr implements ProcessWatcherListener {
 		{
 			for (final AppConfig app : appConfigs.values()) {
 				if (app.checkAllVars())
-					Display.getDefault().asyncExec(new Runnable() {
-						
-						@Override
+					new Thread() {
 						public void run() {
 							syncApp(app, false);
-							
-						}
-					});
+						}}.start();
 			}
 		}
 	}
@@ -134,8 +130,7 @@ public class AppSyncr implements ProcessWatcherListener {
 			
 			saveSyncInfo(upload);
 			
-			
-			Global.set("ShowToolTip", Language.getFormattedString("UploadFinished", config.getAppName()));
+			showTooltip(Language.getFormattedString("UploadFinished", config.getAppName()));
 		}
 	}
 	
@@ -188,10 +183,19 @@ public class AppSyncr implements ProcessWatcherListener {
 		DropboxEntry meta = dropbox.getMetadata(config.getDropboxZipPath());
 		saveSyncInfo(meta);
 		
-		Global.set("ShowToolTip", Language.getFormattedString("DownloadFinished", config.getAppName()));
+		showTooltip(Language.getFormattedString("DownloadFinished", config.getAppName()));
 	}
 	
-	
+	public void showTooltip(final String text) {
+		Display.getDefault().asyncExec(new Runnable() {
+			
+			@Override
+			public void run() {
+				Global.set("ShowToolTip", text);
+			}
+		});
+		
+	}
 	public void saveSyncInfo(DropboxEntry entry) {
 		kurumConfig.setString(entry.fileName, entry.modifydate.toString());
 	}
