@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
 public class AppConfigManagerWindow extends Window {
@@ -96,6 +97,24 @@ public class AppConfigManagerWindow extends Window {
 		authorLabel = new Label(shell, SWT.LEFT);
 		authorLabel.setLayoutData(fillerGridData);
 		
+		
+		button = new Button(shell, SWT.PUSH);
+		button.setText("DeleteCurrentAppConfig");
+		button.setLayoutData(horizSpanGridData);
+		button.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				onClickDeleteCurrentAppConfigButton();
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
 		button = new Button(shell, SWT.PUSH);
 		button.setText(Language.getString("ImportAppConfigFile"));
 		button.setLayoutData(horizSpanGridData);
@@ -150,6 +169,22 @@ public class AppConfigManagerWindow extends Window {
 		loadAppConfigList();
 	}
 	
+	protected void onClickDeleteCurrentAppConfigButton() {
+		
+		MessageBox msgBox = new MessageBox(getShell(), SWT.YES | SWT.NO | SWT.ICON_INFORMATION);
+		msgBox.setText(Environment.KURUMTITLE);
+		msgBox.setMessage("ConfirmDeleteAppConfig");
+		
+		if (msgBox.open() == SWT.YES) {
+			int select = appConfigCombo.getSelectionIndex();
+			
+			if (select >= 0) {
+				AppConfig currentAppConfig = appConfigs.get(select);
+				System.out.println(FileUtil.delete(currentAppConfig.getOriginalFile()));
+			}
+		}
+	}
+
 	protected void onClickImportAppConfigButton() {
 		boolean success = false;
 		FileDialog dlg = new FileDialog(getShell(), SWT.OPEN);
@@ -169,11 +204,11 @@ public class AppConfigManagerWindow extends Window {
 					&& tempConfig.getAppTitle() != null) {
 				File targetFile = new File(Environment.KURUM + "/AppConfigs/" + configFile.getName());
 				FileUtil.copy(configFile, targetFile);
-				success = true;
+				
 				Global.setObject("LastShell", getShell());
 				Global.set("MessageBox",
 						Language.getFormattedString("AppConfigImported", tempConfig.getAppTitle()));
-				onClickRefreshAppConfigsButton();
+				success = true;
 			}
 		}
 		
@@ -187,7 +222,6 @@ public class AppConfigManagerWindow extends Window {
 		appConfigCombo.removeAll();
 		loadAppConfigList();
 		Global.set("WantSyncManually", true);
-		Global.set("RefreshAppConfigs", true);
 	}
 
 	private void onAppConfigListSelected(int index) {

@@ -8,6 +8,8 @@ import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.eclipse.swt.widgets.Display;
+
 public class AppSyncr implements ProcessWatcherListener {
 	private final static int PROCESS_WATCH_PERIOD = 1000 * 5;
 	private final static int AUTOMATIC_SYNC_PERIOD = 1000 * 60 * 5;
@@ -28,11 +30,14 @@ public class AppSyncr implements ProcessWatcherListener {
 		{
 			for (final AppConfig app : appConfigs.values()) {
 				if (app.checkAllVars())
-					new Thread() {
+					Display.getDefault().asyncExec(new Runnable() {
+						
+						@Override
 						public void run() {
 							syncApp(app, false);
+							
 						}
-					}.start();
+					});
 			}
 		}
 	}
@@ -129,6 +134,8 @@ public class AppSyncr implements ProcessWatcherListener {
 			
 			saveSyncInfo(upload);
 			
+			
+			Global.set("ShowToolTip", Language.getFormattedString("UploadFinished", config.getAppName()));
 		}
 	}
 	
@@ -180,6 +187,8 @@ public class AppSyncr implements ProcessWatcherListener {
 		
 		DropboxEntry meta = dropbox.getMetadata(config.getDropboxZipPath());
 		saveSyncInfo(meta);
+		
+		Global.set("ShowToolTip", Language.getFormattedString("DownloadFinished", config.getAppName()));
 	}
 	
 	

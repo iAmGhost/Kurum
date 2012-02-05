@@ -3,14 +3,11 @@ package kr.iamghost.kurum;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-
-import org.apache.commons.lang3.SystemUtils;
 
 public class Util {
 

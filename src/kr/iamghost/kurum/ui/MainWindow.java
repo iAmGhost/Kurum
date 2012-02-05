@@ -41,7 +41,6 @@ public class MainWindow extends Window implements GlobalEventListener{
 	private PropertyUtil kurumConfig;
 	private AppSyncr appSyncr;
 	private TrayItem trayItem;
-	//private ToolTip toolTip;
 	
 	protected boolean quit;
 	
@@ -96,21 +95,36 @@ public class MainWindow extends Window implements GlobalEventListener{
 		Shell shell = getShell();
 		
 		GridLayout gridLayout = new GridLayout();
-		gridLayout.numColumns = 2;
+		gridLayout.numColumns = 1;
 		
 		shell.setLayout(gridLayout);
 		
-		GridData gridData;
 		Button button;
 
-		gridData = new GridData();
-		gridData.horizontalSpan = 2;
-		gridData.horizontalAlignment = SWT.FILL;
-		gridData.grabExcessHorizontalSpace = true;
+		GridData horizSpangridData = new GridData();
+		horizSpangridData.horizontalSpan = 2;
+		horizSpangridData.horizontalAlignment = SWT.FILL;
+		horizSpangridData.grabExcessHorizontalSpace = true;
+		
+		button = new Button(shell, SWT.PUSH);
+		button.setText("SyncManually");
+		button.setLayoutData(horizSpangridData);
+		button.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				appSyncr.syncAllApps();
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		
 		button = new Button(shell, SWT.PUSH);
 		button.setText(Language.getString("AppConfigManager"));
-		button.setLayoutData(gridData);
+		button.setLayoutData(horizSpangridData);
 		button.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -124,14 +138,9 @@ public class MainWindow extends Window implements GlobalEventListener{
 			}
 		});
 		
-		gridData = new GridData();
-		gridData.horizontalSpan = 2;
-		gridData.horizontalAlignment = SWT.FILL;
-		gridData.grabExcessHorizontalSpace = true;
-		
 		button = new Button(shell, SWT.PUSH);
 		button.setText(Language.getString("ManageDropboxAccount"));
-		button.setLayoutData(gridData);
+		button.setLayoutData(horizSpangridData);
 		button.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -263,6 +272,12 @@ public class MainWindow extends Window implements GlobalEventListener{
 			msg.setText(Environment.KURUMTITLE);
 			msg.setMessage(e.getString());
 			msg.open();
+		}
+		else if (e.getEventKey().equals("ShowToolTip")) {
+			ToolTip tip = new ToolTip(getShell(), SWT.BALLOON | SWT.ICON_INFORMATION);
+			tip.setMessage(e.getString());
+			tip.setText(Environment.KURUMTITLE);
+			showTooltip(tip);
 		}
 	}
 
