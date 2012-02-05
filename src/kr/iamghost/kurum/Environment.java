@@ -39,8 +39,8 @@ public class Environment {
 		addVariable("LocalAppData", APPDATA_LOCAL);
 		addVariable("AppData", APPDATA);
 		addVariable("Temp", parsePath(System.getProperty("java.io.tmpdir").toString()));
-		addVariable("Documents", new JFileChooser().getFileSystemView().
-				getDefaultDirectory().getAbsolutePath());
+		addVariable("Documents", parsePath(new JFileChooser().getFileSystemView().
+				getDefaultDirectory().getAbsolutePath()));
 		addVariable("Steam", STEAM);
 	}
 	
