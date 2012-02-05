@@ -9,6 +9,7 @@ import kr.iamghost.kurum.AppConfigParser;
 import kr.iamghost.kurum.Environment;
 import kr.iamghost.kurum.FileUtil;
 import kr.iamghost.kurum.Global;
+import kr.iamghost.kurum.Language;
 import kr.iamghost.kurum.Util;
 
 import org.eclipse.swt.SWT;
@@ -80,23 +81,23 @@ public class AppConfigManagerWindow extends Window {
 		});
 		
 		
-		new Label(shell, SWT.LEFT).setText("AppTitle:");
+		new Label(shell, SWT.LEFT).setText(Language.getString("AppTitle") + ":");
 		
 		appTitleLabel = new Label(shell, SWT.LEFT);
 		appTitleLabel.setLayoutData(fillerGridData);
 		
-		new Label(shell, SWT.LEFT).setText("AppName:");
+		new Label(shell, SWT.LEFT).setText(Language.getString("AppName") + ":");
 		
 		appNameLabel = new Label(shell, SWT.LEFT);
 		appNameLabel.setLayoutData(fillerGridData);
 		
-		new Label(shell, SWT.LEFT).setText("Author:");
+		new Label(shell, SWT.LEFT).setText(Language.getString("Author") + ":");
 		
 		authorLabel = new Label(shell, SWT.LEFT);
 		authorLabel.setLayoutData(fillerGridData);
 		
 		button = new Button(shell, SWT.PUSH);
-		button.setText("ImportAppConfigFile");
+		button.setText(Language.getString("ImportAppConfigFile"));
 		button.setLayoutData(horizSpanGridData);
 		button.addSelectionListener(new SelectionListener() {
 			
@@ -113,7 +114,7 @@ public class AppConfigManagerWindow extends Window {
 		});
 		
 		button = new Button(shell, SWT.PUSH);
-		button.setText("RefreshAppConfigs");
+		button.setText(Language.getString("RefreshAppConfigs"));
 		button.setLayoutData(horizSpanGridData);
 		button.addSelectionListener(new SelectionListener() {
 			
@@ -130,7 +131,7 @@ public class AppConfigManagerWindow extends Window {
 		});
 		
 		button = new Button(shell, SWT.PUSH);
-		button.setText("BrowseAppConfigDirectory");
+		button.setText(Language.getString("BrowseAppConfigDirectory"));
 		button.setLayoutData(horizSpanGridData);
 		button.addSelectionListener(new SelectionListener() {
 			
@@ -169,13 +170,14 @@ public class AppConfigManagerWindow extends Window {
 				File targetFile = new File(Environment.KURUM + "/AppConfigs/" + configFile.getName());
 				FileUtil.copy(configFile, targetFile);
 				success = true;
-				Global.set("MessageBox", "AppConfigImported: " + tempConfig.getAppTitle());
+				Global.set("MessageBox",
+						Language.getFormattedString("AppConfigImported", tempConfig.getAppTitle()));
 				onClickRefreshAppConfigsButton();
 			}
 		}
 		
 		if (!success)
-			Global.set("MessageBox", "ConfigImportFailed");
+			Global.set("MessageBox", Language.getString("ConfigImportFailed"));
 			
 	}
 

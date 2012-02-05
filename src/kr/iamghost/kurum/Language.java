@@ -22,11 +22,11 @@ public class Language {
 		return value;
 	}
 	
-	public static String getFormattedString(String key, String format, Object ... args) {
+	public static String getFormattedString(String key, Object ... args) {
 		String value = key;
 		try {
 			value = resource.getString(key);
-			value = String.format(format, args);
+			value = String.format(value, args);
 		}
 		catch (Exception e) {
 			e.printStackTrace();

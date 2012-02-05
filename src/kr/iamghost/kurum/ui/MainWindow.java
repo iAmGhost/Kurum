@@ -257,6 +257,7 @@ public class MainWindow extends Window implements GlobalEventListener{
 		}
 		else if (e.getEventKey().equals("MessageBox")) {
 			MessageBox msg = new MessageBox(getShell(), SWT.ICON_INFORMATION | SWT.OK);
+			msg.setText(Environment.KURUMTITLE);
 			msg.setMessage(e.getString());
 			msg.open();
 		}
