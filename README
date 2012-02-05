@@ -1,1 +1,7 @@
-KurumReadme
+Kurum is application that sync other application's data, especially game saves.
+
+Reason of i have started to make this application is lack of Steam Cloud support games.
+
+Features:
+* Detects certain process and sync data when process ends.
+* Sync between different platforms: just like Steam Cloud.
