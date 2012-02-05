@@ -22,15 +22,22 @@ public class AppSyncr implements ProcessWatcherListener {
 		if (!dropbox.isLinked()) Global.set("DropboxLoginError", true);
 	}
 	
+	
 	public void syncAllApps() {
 		if (dropbox.isLinked() == true)
 		{
-			for (AppConfig app : appConfigs.values()) {
+			for (final AppConfig app : appConfigs.values()) {
 				if (app.checkAllVars())
-					syncApp(app, false);
+					new Thread() {
+						public void run() {
+							syncApp(app, false);
+						}
+					}.start();
 			}
 		}
 	}
+	
+	
 	
 	public void timedSync() {
 		if (!processWatcher.foundAtLeastOneProcess())
