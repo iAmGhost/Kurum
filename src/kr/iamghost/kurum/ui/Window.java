@@ -47,6 +47,11 @@ public class Window {
 	public void open() {
 		getShell().open();
 	}
+	
+	public void show(boolean raise) {
+		shell.setVisible(true);
+		if (raise) shell.forceActive();
+	}
 
 	public Display getDisplay() {
 		return display;

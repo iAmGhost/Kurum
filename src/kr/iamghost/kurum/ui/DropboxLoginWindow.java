@@ -116,7 +116,7 @@ public class DropboxLoginWindow extends Window implements SelectionListener{
 		
 		MessageBox question = new MessageBox(getShell(),
 				SWT.ICON_QUESTION | SWT.YES | SWT.NO);
-		question.setMessage(Language.getString("DropboxReferalQuestion"));
+		question.setMessage(Language.getString("DropboxReferralQuestion"));
 		
 		if (question.open() == SWT.YES) url = "http://db.tt/mbTseJZf";
 		
@@ -143,6 +143,13 @@ public class DropboxLoginWindow extends Window implements SelectionListener{
 			messageBox.setMessage(Language.getString("LoginNotify"));
 			
 			String url = dropbox.requestNewToken();
+			
+			if (url == null) {
+				messageBox.setMessage(Language.getString("CantConnectToDropbox"));
+				messageBox.open();
+			}
+			
+			
 			BrowserLauncher launcher;
 			
 			try {

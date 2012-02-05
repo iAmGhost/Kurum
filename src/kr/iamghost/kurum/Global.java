@@ -9,6 +9,7 @@ public class Global {
 	private static HashMap<String, String> strings = new HashMap<String, String>();
 	private static HashMap<String, Integer> ints = new HashMap<String, Integer>();
 	private static HashMap<String, Boolean> bools = new HashMap<String, Boolean>();
+	private static HashMap<String, Object> objs = new HashMap<String, Object>();
 	private static EventListenerList eventList = new EventListenerList();
 	
 	public static void addEventlistener(GlobalEventListener ls) {
@@ -40,6 +41,11 @@ public class Global {
 		raiseEvents(key);
 	}
 	
+	public static void setObject(String key, Object value) {
+		objs.put(key, value);
+		raiseEvents(key);
+	}
+	
 	public static String getString(String key) {
 		return strings.get(key);
 	}
@@ -50,5 +56,9 @@ public class Global {
 	
 	public static boolean getBool(String key) {
 		return bools.get(key);
+	}
+	
+	public static Object getObject(String key) {
+		return objs.get(key);
 	}
 }

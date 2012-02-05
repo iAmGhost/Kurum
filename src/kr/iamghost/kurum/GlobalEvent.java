@@ -31,5 +31,10 @@ public class GlobalEvent extends EventObject {
 	public boolean getBool() {
 		return Global.getBool(eventKey);
 	}
+	
+	
+	public Object getObject() {
+		return Global.getObject(eventKey);
+	}
 
 }

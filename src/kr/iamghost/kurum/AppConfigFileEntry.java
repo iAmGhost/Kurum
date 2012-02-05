@@ -34,11 +34,11 @@ public class AppConfigFileEntry {
 	}
 	
 	public String getOriginalPath() {
-		return originalPath;
+		return Environment.parsePath(originalPath);
 	}
 	
 	public File getOriginalFile() {
-		return new File(originalPath);
+		return new File(getOriginalPath());
 	}
 	
 	public void setOriginalPath(String originalPath) {

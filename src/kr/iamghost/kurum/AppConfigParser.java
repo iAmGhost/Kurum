@@ -1,5 +1,6 @@
 package kr.iamghost.kurum;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.xml.parsers.SAXParser;
@@ -12,15 +13,17 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class AppConfigParser extends DefaultHandler {
 	public enum Status {
-		NONE, APPCONFIG, TITLE, NAME, ENTRIES, ENTRY, FILE, DIR, FINALIZE;
+		NONE, APPCONFIG, TITLE, AUTHOR, ENTRIES, ENTRY, VAR, FILE, DIR, FINALIZE;
 	}
 	
 	private Status status;
 	private SAXParser parser;
 	private AppConfig tempConfig;
 	private AppConfigFileEntry tempFileEntry;
+	private AppConfigVariable tempVariable;
 	private String platformString;
 	private String tempString;
+	private String filePath;
 	private boolean found = false;
 	
 	public AppConfigParser() {
@@ -44,18 +47,21 @@ public class AppConfigParser extends DefaultHandler {
 		}
 	}
 	
-	public void startElement(String uri, String localName,String qName, Attributes attributes)
+	public void startElement(String uri, String localName, String qName,
+			Attributes attributes)
 			throws SAXException {
 		
 		if (qName.equalsIgnoreCase("AppConfig")) {
 			status = Status.APPCONFIG;
 			tempConfig = new AppConfig();
+			tempConfig.setOriginalFile(new File(filePath));
+			tempConfig.setAppName(attributes.getValue("internalName"));
 		}
 		else if(qName.equalsIgnoreCase("title")) {
 			status = Status.TITLE;
 		}
-		else if (qName.equals("name")) {
-			status = Status.NAME;
+		else if(qName.equalsIgnoreCase("author")) {
+			status = Status.AUTHOR;
 		}
 		else if (qName.equalsIgnoreCase("entries")) {
 			status = Status.ENTRIES;
@@ -71,6 +77,13 @@ public class AppConfigParser extends DefaultHandler {
 			{
 				this.found = false;
 			}
+		}
+		else if (qName.equalsIgnoreCase("var") && found) {
+			tempVariable = new AppConfigVariable();
+			tempVariable.setName(attributes.getValue("name"));
+			tempVariable.setType(attributes.getValue("type"));
+			tempVariable.setFilter(attributes.getValue("filter"));
+			status = Status.VAR;
 		}
 		else if (qName.equalsIgnoreCase("file") && found) {
 			tempFileEntry = new AppConfigFileEntry();
@@ -91,6 +104,10 @@ public class AppConfigParser extends DefaultHandler {
 			
 			status = Status.DIR;
 		}
+		else
+		{
+			status = Status.NONE;
+		}
 	}
 
 	public void characters(char ch[], int start, int length) throws SAXException {
@@ -102,10 +119,17 @@ public class AppConfigParser extends DefaultHandler {
 			tempConfig.setAppTitle(tempString);
 			status = Status.NONE;
 			break;
-		case NAME:
-			tempConfig.setAppName(tempString);
+			
+		case VAR:
+			tempVariable.setMessage(tempString);
 			status = Status.NONE;
 			break;
+			
+		case AUTHOR:
+			tempConfig.setAuthor(tempString);
+			status = Status.NONE;
+			break;
+			
 		case FILE:
 		case DIR:
 			tempFileEntry.setOriginalPath(Environment.parsePath(tempString));
@@ -116,7 +140,10 @@ public class AppConfigParser extends DefaultHandler {
 	
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		if (qName.equalsIgnoreCase("entry") && found) {
-				tempConfig.addFile(tempFileEntry);
+			tempConfig.addFile(tempFileEntry);
+		}
+		else if(qName.equalsIgnoreCase("var") && found) {
+			tempConfig.addVar(tempVariable);
 		}
 		else if(qName.equalsIgnoreCase("AppConfig")) {
 			status = Status.FINALIZE;
@@ -126,6 +153,7 @@ public class AppConfigParser extends DefaultHandler {
 	public void parse(String filePath) {
 		
 		try {
+			this.filePath = filePath;
 			parser.parse(filePath, this);
 		}
 		catch (SAXException e) {
@@ -139,7 +167,6 @@ public class AppConfigParser extends DefaultHandler {
 	}
 	
 	public AppConfig getAppConfig() {
-		
 		return tempConfig;
 	}
 }

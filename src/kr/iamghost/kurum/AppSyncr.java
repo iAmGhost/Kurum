@@ -26,7 +26,8 @@ public class AppSyncr implements ProcessWatcherListener {
 		if (dropbox.isLinked() == true)
 		{
 			for (AppConfig app : appConfigs.values()) {
-				syncApp(app, false);
+				if (app.checkAllVars())
+					syncApp(app, false);
 			}
 		}
 	}
@@ -37,11 +38,15 @@ public class AppSyncr implements ProcessWatcherListener {
 	}
 	
 	public void init() {
-		refreshAppConfigs();
-		refreshProcessWatcher();
-		kurumConfig = new PropertyUtil().loadDefaultFile();
+		reload();
+		kurumConfig = PropertyUtil.getDefaultProperty();
 		startTimedSync();
 		syncAllApps();
+	}
+	
+	public void reload() {
+		refreshAppConfigs();
+		refreshProcessWatcher();
 	}
 	
 	public void startTimedSync() {
@@ -173,7 +178,6 @@ public class AppSyncr implements ProcessWatcherListener {
 	
 	public void saveSyncInfo(DropboxEntry entry) {
 		kurumConfig.setString(entry.fileName, entry.modifydate.toString());
-		kurumConfig.save();
 	}
 
 	public void syncApp(AppConfig config, boolean force) {

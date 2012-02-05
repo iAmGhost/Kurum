@@ -9,12 +9,21 @@ import java.util.Properties;
 
 
 public class PropertyUtil {
+	private static PropertyUtil defaultProperty = null;
 	private Properties property = null;
 	private String propertyFilePath = null;
 
+	static {
+		defaultProperty = new PropertyUtil().loadDefaultFile();
+	}
+	
 	protected void init(InputStream is) throws IOException {
 		property = new Properties();
 		property.load(is);
+	}
+	
+	public static PropertyUtil getDefaultProperty() {
+		return defaultProperty;
 	}
 	
 	public PropertyUtil loadDefaultFile() {
@@ -69,7 +78,14 @@ public class PropertyUtil {
 	}
 	
 	public void setString(String key, String value) {
-		property.setProperty(key, value);
+		if (value.equals("")) {
+			property.remove(key);
+		}
+		else
+		{
+			property.setProperty(key, value);
+		}
+		save();
 	}
 	
 	public void save() {
