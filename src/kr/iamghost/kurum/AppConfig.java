@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class AppConfig {
+	private boolean isSyncing = false;
 	private String appTitle;
 	private String appName;
 	private String processName;
@@ -56,8 +57,6 @@ public class AppConfig {
 		return originalFile;
 	}
 	
-	
-
 	public void setOriginalFile(File originalFile) {
 		this.originalFile = originalFile;
 	}
@@ -98,5 +97,13 @@ public class AppConfig {
 		}
 		
 		return errorNotFound;
+	}
+
+	public boolean isSyncing() {
+		return isSyncing;
+	}
+
+	public void setSyncing(boolean isSyncing) {
+		this.isSyncing = isSyncing;
 	}
 }

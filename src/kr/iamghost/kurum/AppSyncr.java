@@ -37,7 +37,7 @@ public class AppSyncr implements ProcessWatcherListener {
 		if (dropbox.isLinked() == true)
 		{
 			for (final AppConfig app : appConfigs.values()) {
-				if (app.checkAllVars())
+				if (app.checkAllVars() && !app.isSyncing())
 					syncApp(app, false);
 			}
 		}
@@ -213,6 +213,8 @@ public class AppSyncr implements ProcessWatcherListener {
 
 	public void syncApp(AppConfig config, boolean force) {
 		if (config != null) {
+			config.setSyncing(true);
+			
 			String appName = config.getAppName();
 			String archivePath = config.getDropboxZipPath();
 			Date localDate = Util.stringToDate(kurumConfig.getString(appName + ".zip"));
@@ -253,6 +255,8 @@ public class AppSyncr implements ProcessWatcherListener {
 					Log.write("Same, POMF =3 :" + config.getAppTitle());
 				}	
 			}
+			
+			config.setSyncing(false);
 		}
 		kurumConfig.save();
 	}
