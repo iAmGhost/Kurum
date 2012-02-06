@@ -153,7 +153,7 @@ public class AppConfigParser extends DefaultHandler {
 	public void parse(String filePath) {
 		try {
 			this.filePath = filePath;
-			parser.parse(filePath, this);
+			parser.parse(new File(filePath), this);
 		}
 		catch (SAXException e) {
 			// TODO Auto-generated catch block

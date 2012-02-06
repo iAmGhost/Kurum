@@ -7,6 +7,7 @@ import javax.swing.JFileChooser;
 import org.apache.commons.lang3.SystemUtils;
 
 import com.sun.jna.platform.win32.Advapi32Util;
+import com.sun.jna.platform.win32.Win32Exception;
 import com.sun.jna.platform.win32.WinReg;
 
 public class Environment {
@@ -21,10 +22,15 @@ public class Environment {
 	static {
 		String appDataDir = SystemUtils.getUserHome().toString().replaceAll("\\\\", "/");
 		if (SystemUtils.IS_OS_WINDOWS) {
-			APPDATA_LOCAL = appDataDir + "/AppData/Local";
-			APPDATA = appDataDir + "/AppData/Roaming";
-			STEAM = Advapi32Util.registryGetStringValue(WinReg.HKEY_CURRENT_USER,
-					"Software\\Valve\\Steam", "SteamPath");
+			APPDATA_LOCAL = System.getenv("LOCALAPPDATA");
+			APPDATA = System.getenv("APPDATA");
+			try {
+				STEAM = Advapi32Util.registryGetStringValue(WinReg.HKEY_CURRENT_USER,
+						"Software\\Valve\\Steam", "SteamPath");
+			}
+			catch (Win32Exception e) {
+				STEAM = "";
+			}
 		}
 		else if (SystemUtils.IS_OS_MAC_OSX) {
 			APPDATA = appDataDir +"/Library/Application Support";
