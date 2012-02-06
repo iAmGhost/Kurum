@@ -26,14 +26,19 @@ public class AppSyncr implements ProcessWatcherListener {
 	
 	
 	public void syncAllApps() {
+		new Thread() {
+			public void run() {
+				syncAllAppsNotThreaded();
+			}
+		}.start();
+	}
+
+	public void syncAllAppsNotThreaded() {
 		if (dropbox.isLinked() == true)
 		{
 			for (final AppConfig app : appConfigs.values()) {
 				if (app.checkAllVars())
-					new Thread() {
-						public void run() {
-							syncApp(app, false);
-						}}.start();
+					syncApp(app, false);
 			}
 		}
 	}
@@ -102,6 +107,8 @@ public class AppSyncr implements ProcessWatcherListener {
 	}
 	
 	public void uploadToDropbox(AppConfig config) {
+		showTooltip(Language.getFormattedString("StartSyncing", config.getAppTitle()));
+		
 		Iterator<AppConfigFileEntry> it = config.getFilesIterator();
 		
 		String appName = config.getAppName();
@@ -110,6 +117,7 @@ public class AppSyncr implements ProcessWatcherListener {
 		
 		try {
 			tempZipFile = File.createTempFile(appName, ".zip");
+			tempZipFile.deleteOnExit();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -135,6 +143,8 @@ public class AppSyncr implements ProcessWatcherListener {
 	}
 	
 	public void downloadToLocal(AppConfig config) {
+		showTooltip(Language.getFormattedString("StartSyncing", config.getAppTitle()));
+		
 		Iterator<AppConfigFileEntry> it = config.getFilesIterator();
 		
 		String appName = config.getAppName();
@@ -145,6 +155,7 @@ public class AppSyncr implements ProcessWatcherListener {
 		
 		try {
 			tempFile = File.createTempFile(appName, ".zip");
+			tempFile.deleteOnExit();
 			
 			dropbox.download(config.getDropboxZipPath(), tempFile);
 			zip = new ZipUtil().loadZip(tempFile);
@@ -208,12 +219,12 @@ public class AppSyncr implements ProcessWatcherListener {
 			
 			DropboxEntry lastSync = dropbox.getMetadata(archivePath);
 			
+			
 			if (!lastSync.isValid || lastSync.isDeleted) {
 				//First upload->Upload
 				Log.write("First upload :" + config.getAppTitle());
 				uploadToDropbox(config);
 			}
-			
 			else if(lastSync.isValid) {
 				if (!lastSync.isDeleted && localDate == null) {
 					//First sync->Download
@@ -240,7 +251,7 @@ public class AppSyncr implements ProcessWatcherListener {
 				{
 					//Same, but will never reach here except timed sync
 					Log.write("Same, POMF =3 :" + config.getAppTitle());
-				}
+				}	
 			}
 		}
 		kurumConfig.save();

@@ -40,7 +40,7 @@ public class AppConfigManagerWindow extends Window {
 	
 	public void init() {
 		Shell shell = getShell();
-		shell.setText("AppConfigManager");
+		shell.setText(Language.getString("AppConfigManager"));
 		shell.setSize(300, 300);
 		
 		Button button;
@@ -99,7 +99,7 @@ public class AppConfigManagerWindow extends Window {
 		
 		
 		button = new Button(shell, SWT.PUSH);
-		button.setText("DeleteCurrentAppConfig");
+		button.setText(Language.getString("DeleteCurrentAppConfig"));
 		button.setLayoutData(horizSpanGridData);
 		button.addSelectionListener(new SelectionListener() {
 			
@@ -180,13 +180,13 @@ public class AppConfigManagerWindow extends Window {
 			
 			if (select >= 0) {
 				AppConfig currentAppConfig = appConfigs.get(select);
-				System.out.println(FileUtil.delete(currentAppConfig.getOriginalFile()));
+				FileUtil.delete(currentAppConfig.getOriginalFile());
+				onClickRefreshAppConfigsButton();
 			}
 		}
 	}
 
 	protected void onClickImportAppConfigButton() {
-		boolean success = false;
 		FileDialog dlg = new FileDialog(getShell(), SWT.OPEN);
 		String[] filter = {"*.xml"};
 		dlg.setFilterExtensions(filter);
@@ -208,19 +208,20 @@ public class AppConfigManagerWindow extends Window {
 				Global.setObject("LastShell", getShell());
 				Global.set("MessageBox",
 						Language.getFormattedString("AppConfigImported", tempConfig.getAppTitle()));
-				success = true;
+				onClickRefreshAppConfigsButton();
+			}
+			else
+			{
+				Global.setObject("LastShell", getShell());
+				Global.set("MessageBox", Language.getString("ConfigImportFailed"));
 			}
 		}
-		
-		if (!success)
-			Global.setObject("LastShell", getShell());
-			Global.set("MessageBox", Language.getString("ConfigImportFailed"));
-			
 	}
 
 	private void onClickRefreshAppConfigsButton() {
 		appConfigCombo.removeAll();
 		loadAppConfigList();
+		Global.set("RefreshAppConfigs", true);
 		Global.set("WantSyncManually", true);
 	}
 

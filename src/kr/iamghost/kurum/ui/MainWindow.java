@@ -10,6 +10,7 @@ import kr.iamghost.kurum.Global;
 import kr.iamghost.kurum.GlobalEvent;
 import kr.iamghost.kurum.GlobalEventListener;
 import kr.iamghost.kurum.Language;
+import kr.iamghost.kurum.Log;
 import kr.iamghost.kurum.PropertyUtil;
 
 import org.apache.commons.lang3.SystemUtils;
@@ -41,6 +42,7 @@ public class MainWindow extends Window implements GlobalEventListener{
 	private PropertyUtil kurumConfig;
 	private AppSyncr appSyncr;
 	private TrayItem trayItem;
+	private Window logWindow;
 	
 	protected boolean quit;
 	
@@ -61,7 +63,7 @@ public class MainWindow extends Window implements GlobalEventListener{
 	public void init() {
 		Shell shell = getShell();
 		shell.setText(Environment.KURUMTITLE);
-		shell.setSize(400, 400);
+		shell.setSize(400, 250);
 		
 		initForm();
 		initTrayAndMenu();
@@ -89,6 +91,8 @@ public class MainWindow extends Window implements GlobalEventListener{
 		
 		appSyncr = new AppSyncr();
 		appSyncr.init();
+		
+		logWindow = WindowFactory.create("Log");
 	}
 	
 	private void initForm() {
@@ -107,7 +111,7 @@ public class MainWindow extends Window implements GlobalEventListener{
 		horizSpangridData.grabExcessHorizontalSpace = true;
 		
 		button = new Button(shell, SWT.PUSH);
-		button.setText("SyncManually");
+		button.setText(Language.getString("SyncManually"));
 		button.setLayoutData(horizSpangridData);
 		button.addSelectionListener(new SelectionListener() {
 			@Override
@@ -145,6 +149,22 @@ public class MainWindow extends Window implements GlobalEventListener{
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				onClickLoginButton();
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
+		button = new Button(shell, SWT.PUSH);
+		button.setText("Showlogs");
+		button.setLayoutData(horizSpangridData);
+		button.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				logWindow.open();
 			}
 			
 			@Override
@@ -255,6 +275,7 @@ public class MainWindow extends Window implements GlobalEventListener{
 		}
 		else if (e.getEventKey().equals("RefreshAppConfigs") && e.getBool()) {
 			appSyncr.reload();
+			Log.write("Reload AppConfigs");
 		}
 		else if (e.getEventKey().equals("WantSyncManually")) {
 			appSyncr.syncAllApps();
