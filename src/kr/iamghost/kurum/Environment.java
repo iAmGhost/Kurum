@@ -20,10 +20,12 @@ public class Environment {
 	public static String STEAM;
 	
 	static {
+		envVars = new HashMap<String, EnvironmentVariable>();
+		
 		String appDataDir = SystemUtils.getUserHome().toString().replaceAll("\\\\", "/");
 		if (SystemUtils.IS_OS_WINDOWS) {
-			APPDATA_LOCAL = System.getenv("LOCALAPPDATA");
-			APPDATA = System.getenv("APPDATA");
+			APPDATA_LOCAL = parsePath(System.getenv("LOCALAPPDATA"));
+			APPDATA = parsePath(System.getenv("APPDATA"));
 			try {
 				STEAM = Advapi32Util.registryGetStringValue(WinReg.HKEY_CURRENT_USER,
 						"Software\\Valve\\Steam", "SteamPath");
@@ -41,7 +43,7 @@ public class Environment {
 		VERSION = "1.0";
 		KURUMTITLE = "Kurum " + VERSION;
 		
-		envVars = new HashMap<String, EnvironmentVariable>();
+		
 		addVariable("LocalAppData", APPDATA_LOCAL);
 		addVariable("AppData", APPDATA);
 		addVariable("Temp", parsePath(System.getProperty("java.io.tmpdir").toString()));
