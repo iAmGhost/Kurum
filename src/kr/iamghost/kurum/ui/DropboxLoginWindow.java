@@ -1,6 +1,7 @@
 package kr.iamghost.kurum.ui;
 
 import kr.iamghost.kurum.DropboxUtil;
+import kr.iamghost.kurum.Global;
 import kr.iamghost.kurum.Language;
 
 import org.eclipse.swt.SWT;
@@ -31,7 +32,7 @@ public class DropboxLoginWindow extends Window implements SelectionListener{
 	
 	@Override
 	public void init() {
-		dropbox = new DropboxUtil();
+		dropbox = DropboxUtil.getDefaultDropbox();
 		
 		Shell shell = getShell();
 		shell.setText(Language.getString("DropboxLogin"));
@@ -96,6 +97,7 @@ public class DropboxLoginWindow extends Window implements SelectionListener{
 			getShell().pack(true);
 		}
 		else {
+			createAccountButton.setVisible(true);
 			loginButton.setText(Language.getString("LoginWithDropbox"));
 			accountInfoLabel.setText("");
 		}
@@ -142,6 +144,7 @@ public class DropboxLoginWindow extends Window implements SelectionListener{
 			MessageBox messageBox = new MessageBox(getShell(), SWT.ICON_INFORMATION | SWT.OK);
 			messageBox.setMessage(Language.getString("LoginNotify"));
 			
+			dropbox.refreshClient();
 			String url = dropbox.requestNewToken();
 			
 			if (url == null) {
@@ -166,6 +169,11 @@ public class DropboxLoginWindow extends Window implements SelectionListener{
 					messageBox.setMessage(Language.getString("LoginSaved"));
 					messageBox.open();
 					dropbox.saveToken();
+					dropbox.loadSavedKeys();
+				}
+				else {
+					Global.setObject("LastShell", getShell());
+					Global.set("MessageBox", "LoginFailed");
 				}
 			}
 		}

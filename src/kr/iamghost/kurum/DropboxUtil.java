@@ -25,11 +25,25 @@ public class DropboxUtil {
 	private DropboxAPI<WebAuthSession> client;
 	private WebAuthSession session;
 	private PropertyUtil config;
-	private boolean loggedIn = false;
+	private boolean isLoggedIn = false;
+	private static DropboxUtil defaultDropbox;
+	
+	static {
+		defaultDropbox = new DropboxUtil();
+	}
+	
+	public static DropboxUtil getDefaultDropbox() {
+		return defaultDropbox;
+	}
 	
 	public DropboxUtil() {
 		config = new PropertyUtil().loadDefaultFile();
 		
+		refreshClient();
+		loadSavedKeys();
+	}
+	
+	public void refreshClient() {
 		PropertyUtil keyFile = new PropertyUtil().loadLocalFile(APP_KEY_FILE);
 		String api_key = keyFile.getString("api_key");
 		String api_secret =  keyFile.getString("api_secret");
@@ -37,8 +51,6 @@ public class DropboxUtil {
 		AppKeyPair appkey = new AppKeyPair(api_key, api_secret);
 		session = new WebAuthSession(appkey, ACCESS_TYPE);
 		client = new DropboxAPI<WebAuthSession>(session);
-		
-		loadSavedKeys();
 	}
 	
 	public DropboxEntry getMetadata(String path) {
@@ -136,13 +148,39 @@ public class DropboxUtil {
 		if (!auth_key.equals("") && !auth_secret.equals("")) {
 			AccessTokenPair tokens = new AccessTokenPair(auth_key, auth_secret);
 			session.setAccessTokenPair(tokens);
-			loggedIn = true;
+			if (isLinked()) {
+				Global.set("OnDropboxLoggedIn", true);
+			}
 		}
+		
+		
 	}
 	
 	public boolean isLinked() {
-		if (session.isLinked() && loggedIn) return true;
-		return false;
+		boolean linked = false;
+		
+		try {
+			if (isLoggedIn) {
+				linked = true;
+			}
+			else
+			{
+				if (client.accountInfo().uid > 0 && session.isLinked()) {
+					linked = true;
+					isLoggedIn = true;
+				}
+			}
+		}
+		catch (DropboxUnlinkedException e) {
+			isLoggedIn = false;
+			linked = false;
+		}
+		catch (DropboxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return linked;
 	}
 	
 	public Account getAccountInfo() {
@@ -176,6 +214,9 @@ public class DropboxUtil {
 		
 		try {
 			userid = session.retrieveWebAccessToken(requestTokenPair);
+		}
+		catch (DropboxUnlinkedException e) {
+			userid = null;
 		}
 		catch (DropboxException e) {
 			e.printStackTrace();

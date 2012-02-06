@@ -20,7 +20,7 @@ public class AppSyncr implements ProcessWatcherListener {
 	private Timer autoSyncTimer;
 	
 	public AppSyncr() {
-		dropbox = new DropboxUtil();
+		dropbox = DropboxUtil.getDefaultDropbox();
 		if (!dropbox.isLinked()) Global.set("DropboxLoginError", true);
 	}
 	

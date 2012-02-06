@@ -5,6 +5,7 @@ import java.awt.SystemTray;
 import kr.iamghost.kurum.AppConfigVariable;
 import kr.iamghost.kurum.AppConfigVariable.VarType;
 import kr.iamghost.kurum.AppSyncr;
+import kr.iamghost.kurum.DropboxUtil;
 import kr.iamghost.kurum.Environment;
 import kr.iamghost.kurum.Global;
 import kr.iamghost.kurum.GlobalEvent;
@@ -43,7 +44,7 @@ public class MainWindow extends Window implements GlobalEventListener{
 	private AppSyncr appSyncr;
 	private TrayItem trayItem;
 	private Window logWindow;
-	
+
 	protected boolean quit;
 	
 	public MainWindow(Display display) {
@@ -116,7 +117,9 @@ public class MainWindow extends Window implements GlobalEventListener{
 		button.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				appSyncr.syncAllApps();
+				checkDropboxLoginAndRaiseError();
+				if (DropboxUtil.getDefaultDropbox().isLinked())
+					appSyncr.syncAllApps();
 			}
 			
 			@Override
@@ -132,7 +135,9 @@ public class MainWindow extends Window implements GlobalEventListener{
 		button.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				onClickAppManagerButton();
+				checkDropboxLoginAndRaiseError();
+				if (DropboxUtil.getDefaultDropbox().isLinked())
+					onClickAppManagerButton();
 			}
 			
 			@Override
@@ -187,6 +192,10 @@ public class MainWindow extends Window implements GlobalEventListener{
 		Window newWindow = WindowFactory.create(windowName);
 		newWindow.open();
 		newWindow.show(true);
+	}
+	
+	private void checkDropboxLoginAndRaiseError() {
+		if (!DropboxUtil.getDefaultDropbox().isLinked()) Global.set("DropboxLoginError", true);
 	}
 	
 	private void initTrayAndMenu() {
@@ -281,9 +290,15 @@ public class MainWindow extends Window implements GlobalEventListener{
 			appSyncr.syncAllApps();
 		}
 		else if(e.getEventKey().equals("VariableNotFoundError")) {
-			AppConfigVariable var = (AppConfigVariable)e.getObject();
-			
-			handleVariableNotFoundError(var);
+			final AppConfigVariable var = (AppConfigVariable)e.getObject();
+			getDisplay().asyncExec(new Runnable() {
+				
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					handleVariableNotFoundError(var);
+				}
+			});
 		}
 		else if (e.getEventKey().equals("MessageBox")) {
 			Shell shell = (Shell)Global.getObject("LastShell");
@@ -299,6 +314,10 @@ public class MainWindow extends Window implements GlobalEventListener{
 			tip.setMessage(e.getString());
 			tip.setText(Environment.KURUMTITLE);
 			showTooltip(tip);
+		}
+		else if (e.getEventKey().equals("OnDropboxLoggedIn")) {
+			if (appSyncr != null)
+				appSyncr.syncAllApps();
 		}
 	}
 
@@ -325,5 +344,7 @@ public class MainWindow extends Window implements GlobalEventListener{
 				break;
 			}
 		}
+		
+		appSyncr.syncAllApps();
 	}
 }
