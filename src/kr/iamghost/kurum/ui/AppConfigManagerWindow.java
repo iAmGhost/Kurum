@@ -32,6 +32,7 @@ public class AppConfigManagerWindow extends Window {
 	private Label appTitleLabel;
 	private Label appNameLabel;
 	private Label authorLabel;
+	private Button deleteButton;
 	
 	public AppConfigManagerWindow(Display display) {
 		super(display);
@@ -98,10 +99,10 @@ public class AppConfigManagerWindow extends Window {
 		authorLabel.setLayoutData(fillerGridData);
 		
 		
-		button = new Button(shell, SWT.PUSH);
-		button.setText(Language.getString("DeleteCurrentAppConfig"));
-		button.setLayoutData(horizSpanGridData);
-		button.addSelectionListener(new SelectionListener() {
+		deleteButton = new Button(shell, SWT.PUSH);
+		deleteButton.setText(Language.getString("DeleteCurrentAppConfig"));
+		deleteButton.setLayoutData(horizSpanGridData);
+		deleteButton.addSelectionListener(new SelectionListener() {
 			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -228,9 +229,16 @@ public class AppConfigManagerWindow extends Window {
 	private void onAppConfigListSelected(int index) {
 		currentAppConfig = appConfigs.get(index);
 		
-		appTitleLabel.setText(currentAppConfig.getAppTitle());
-		appNameLabel.setText(currentAppConfig.getAppName());
-		authorLabel.setText(currentAppConfig.getAuthor());
+		if (index >= 0)
+		{
+			appTitleLabel.setText(currentAppConfig.getAppTitle());
+			appNameLabel.setText(currentAppConfig.getAppName());
+			authorLabel.setText(currentAppConfig.getAuthor());
+			deleteButton.setEnabled(true);
+		}
+		else {
+			deleteButton.setEnabled(false);
+		}
 	}
 	
 	public void loadAppConfigList() {

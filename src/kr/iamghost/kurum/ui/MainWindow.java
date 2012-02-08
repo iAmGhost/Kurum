@@ -74,7 +74,10 @@ public class MainWindow extends Window implements GlobalEventListener{
 			public void shellActivated(ShellEvent e) {}
 			@Override
 			public void shellClosed(ShellEvent e) {
-				getShell().setVisible(false);
+				if (!quit) {
+					getShell().setVisible(false);
+					Global.set("ShowToolTip", Language.getString("TrayNotice"));
+				}
 				e.doit = quit;
 			}
 			@Override
@@ -88,7 +91,7 @@ public class MainWindow extends Window implements GlobalEventListener{
 		Global.addEventlistener(this);
 		
 		kurumConfig = PropertyUtil.getDefaultProperty();
-		checkDefaultLaunch();
+		checkFirstLaunch();
 		
 		appSyncr = new AppSyncr();
 		appSyncr.init();
@@ -251,15 +254,8 @@ public class MainWindow extends Window implements GlobalEventListener{
 		}
 	}
 	
-	public void checkDefaultLaunch() {
-		if (!kurumConfig.getString("isFirstLaunch").equals("false")) {
-			kurumConfig.setString("isFirstLaunch", "false");
-			
-			ToolTip tip = new ToolTip(getShell(), SWT.BALLOON | SWT.ICON_INFORMATION);
-			tip.setMessage(Language.getString("TrayNotice"));
-			tip.setText(Environment.KURUMTITLE);
-			showTooltip(tip);
-		}
+	public void checkFirstLaunch() {
+
 	}
 	
 	public void showTooltip(ToolTip tip) {

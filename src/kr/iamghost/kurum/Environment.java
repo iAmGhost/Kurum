@@ -24,8 +24,22 @@ public class Environment {
 		
 		String appDataDir = SystemUtils.getUserHome().toString().replaceAll("\\\\", "/");
 		if (SystemUtils.IS_OS_WINDOWS) {
-			APPDATA_LOCAL = parsePath(System.getenv("LOCALAPPDATA"));
-			APPDATA = parsePath(System.getenv("APPDATA"));
+			
+			try {
+				APPDATA = parsePath(System.getenv("APPDATA"));
+			}
+			catch (NullPointerException e) {
+				APPDATA = parsePath(System.getProperty("user.home") + "/AppData/Roaming");
+			}
+			
+			try {
+				APPDATA_LOCAL = parsePath(System.getenv("LOCALAPPDATA"));
+			}
+			catch (NullPointerException e) {
+				APPDATA_LOCAL = APPDATA;
+			}
+			
+			
 			try {
 				STEAM = Advapi32Util.registryGetStringValue(WinReg.HKEY_CURRENT_USER,
 						"Software\\Valve\\Steam", "SteamPath");
