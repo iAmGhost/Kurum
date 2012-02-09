@@ -56,6 +56,8 @@
 			<!-- Application Classes -->
 			<fileset dir="./bin" includes="**/*.class" />
 			<fileset dir="./bin" includes="**/*.properties" />
+			<fileset dir="./bin" includes="**/*.png" />
+			<fileset dir="./bin" includes="**/*.ico" />
 			<!-- SWT Jars -->
 			<fileset dir="${lib.dir}/swt" includes="swt-*-3.7.1.jar" />
 			<zipgroupfileset dir="${lib.dir}" includes="*.jar" />
@@ -87,7 +89,8 @@
 		
 		<launch4j>
 			<config dontWrapJar="false" headerType="gui" jarPath="dist/Kurum.jar"
-				outfile="dist/Kurum.exe" customProcName="true" icon="images/Kurum.ico">
+				outfile="dist/Kurum.exe" customProcName="true"
+				icon="src/kr/iamghost/kurum/images/Kurum.ico">
 				<jre minVersion="1.5.0" jdkPreference="preferJre"/>
 				<singleInstance mutexName="Kurum"/>
 			</config>

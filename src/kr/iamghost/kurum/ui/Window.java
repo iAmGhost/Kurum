@@ -120,6 +120,7 @@ public class Window {
 	}
 	
 	public void open() {
+		centre();
 		getShell().open();
 	}
 
