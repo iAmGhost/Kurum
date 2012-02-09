@@ -14,7 +14,8 @@ public class WindowFactory {
 		mWindows.put("DropboxLogin", "DropboxLoginWindow");
 		mWindows.put("Main", "MainWindow");
 		mWindows.put("Log", "LogWindow");
-		mWindows.put("AppConfigManager", "AppConfigManagerWindow");
+		mWindows.put("SyncManager", "SyncManagerWindow");
+		mWindows.put("AppConfigImport", "AppConfigImportWindow");
 	}
 	
 	public static void setDisplay(Display display) {
@@ -30,7 +31,9 @@ public class WindowFactory {
 			String packageName = WindowFactory.class.getPackage().getName();
 			String windowClassName = packageName + "." + mWindows.get(windowName);
 			Constructor<?> windowClass = Class.forName(windowClassName).getConstructor(Display.class);
-			return (Window) windowClass.newInstance(mDisplay);
+			Window instance = (Window) windowClass.newInstance(mDisplay);
+			instance.setWindowName(windowName);
+			return instance;
 		}
 		catch (Exception e) {
 			e.printStackTrace();

@@ -1,6 +1,7 @@
 package kr.iamghost.kurum;
 
 import java.util.Date;
+import java.util.List;
 
 import com.dropbox.client2.DropboxAPI.Entry;
 import com.dropbox.client2.RESTUtility;
@@ -36,6 +37,13 @@ public class DropboxEntry {
 			isDir = entry.isDir;
 			fileName = entry.fileName();
 		}
+	}
+	
+	public List<Entry> getContents() {
+		if (isValid)
+			return entry.contents;
+		else
+			return null;
 	}
 	
 	public Entry getEntry() {

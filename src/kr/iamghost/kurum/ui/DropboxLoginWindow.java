@@ -7,7 +7,6 @@ import kr.iamghost.kurum.Language;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
@@ -30,56 +29,47 @@ public class DropboxLoginWindow extends Window implements SelectionListener{
 		super(display, SWT.CLOSE);
 	}
 	
-	@Override
 	public void init() {
 		dropbox = DropboxUtil.getDefaultDropbox();
 		
 		Shell shell = getShell();
 		shell.setText(Language.getString("DropboxLogin"));
-		
+
 		GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 2;
 		
 		shell.setLayout(gridLayout);
-		
-		GridData gridData = null;
-		Label label = null;
-		Button button = null;
-		
-		label = new Label(shell, SWT.NONE);
-		label.setText(Language.getString("Account") + ":");
-		
-		gridData = new GridData();
-		gridData.horizontalAlignment = SWT.FILL;
-		gridData.minimumWidth = 200;
-		gridData.grabExcessHorizontalSpace = true;
-		
-		label = new Label(shell, SWT.CENTER);
-		label.setText("");
-		label.setLayoutData(gridData);
-		accountInfoLabel = label;
-		
-		gridData = new GridData();
-		gridData.horizontalSpan = 2;
-		gridData.horizontalAlignment = SWT.FILL;
-		gridData.grabExcessHorizontalSpace = true;
-		
-		button = new Button(shell, SWT.PUSH);
-		button.setText(Language.getString("LoginWithDropbox"));
-		button.setLayoutData(gridData);
-		button.addSelectionListener(this);
-		loginButton = button;
 
-		gridData = new GridData();
-		gridData.horizontalSpan = 2;
-		gridData.horizontalAlignment = SWT.FILL;
-		gridData.grabExcessHorizontalSpace = true;
 		
-		button = new Button(shell, SWT.PUSH);
-		button.setText(Language.getString("CreateDropboxAccount"));
-		button.setLayoutData(gridData);
-		button.addSelectionListener(this);
-		createAccountButton = button;
+		Label newLabel = new Label(shell, SWT.NONE);
+		newLabel.setText(Language.getString("Account") + ":");
+		
+		accountInfoLabel = new Label(shell, SWT.CENTER);
+		accountInfoLabel.setText("");
+		accountInfoLabel.setLayoutData(
+				new GridDataBuilder()
+					.fillHorizontal()
+					.setMinimumWidth(200)
+					.create());
+		
+		loginButton = new Button(shell, SWT.PUSH);
+		loginButton.setText(Language.getString("LoginWithDropbox"));
+		loginButton.setLayoutData(
+				new GridDataBuilder()
+					.spanHorizontal(2)
+					.fillHorizontal()
+					.create());
+		
+		loginButton.addSelectionListener(this);
+
+		createAccountButton = new Button(shell, SWT.PUSH);
+		createAccountButton.setText(Language.getString("CreateDropboxAccount"));
+		createAccountButton.setLayoutData(
+				new GridDataBuilder()
+					.spanHorizontal(2)
+					.fillHorizontal()
+					.create());
+		createAccountButton.addSelectionListener(this);	
 		
 		shell.pack();
 		

@@ -87,7 +87,7 @@
 		
 		<launch4j>
 			<config dontWrapJar="false" headerType="gui" jarPath="dist/Kurum.jar"
-				outfile="dist/Kurum.exe" customProcName="true">
+				outfile="dist/Kurum.exe" customProcName="true" icon="images/Kurum.ico">
 				<jre minVersion="1.5.0" jdkPreference="preferJre"/>
 				<singleInstance mutexName="Kurum"/>
 			</config>

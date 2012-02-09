@@ -1,5 +1,13 @@
 package kr.iamghost.kurum.ui;
 
+import java.io.InputStream;
+
+import kr.iamghost.kurum.Global;
+import kr.iamghost.kurum.images.Images;
+
+import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.ShellListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Monitor;
@@ -8,17 +16,68 @@ import org.eclipse.swt.widgets.Shell;
 public class Window {
 	final private Display display;
 	final private Shell shell;
+	private String windowName;
+	private String lastWindowName;
+	private boolean isJumped = false;
 	
 	public Window(Display display) {
 		shell = new Shell(display);
 		this.display = display;
+		initIcon();
+		initWindow();
 		init();
+	}
+	
+	public void initIcon() {
+		InputStream is = Images.class.getResourceAsStream("Kurum_512px.png");
+		shell.setImage(new Image(display, is));
 	}
 	
 	public Window(Display display, int style) {
 		shell = new Shell(display, style);
 		this.display = display;
+		initIcon();
+		initWindow();
 		init();
+	}
+	
+	private void initWindow() {
+		shell.setText("BaseWindow");
+		
+		shell.addShellListener(new ShellListener() {
+			
+			@Override
+			public void shellIconified(ShellEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void shellDeiconified(ShellEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void shellDeactivated(ShellEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void shellClosed(ShellEvent e) {
+				if (!isJumped())
+					Global.set("LastWindowClosed", true);
+			}
+			
+			@Override
+			public void shellActivated(ShellEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
+		centre();
 	}
 	
 	public void centre() {
@@ -33,7 +92,7 @@ public class Window {
 	}
 	
 	public void init() {
-		shell.setText("BaseWindow");
+		
 	}
 	
 	public Shell getShell() {
@@ -42,6 +101,22 @@ public class Window {
 
 	public boolean isDisposed() {
 		return getShell().isDisposed();
+	}
+	
+	public void jumpToNewWindow(String windowName) {
+		isJumped = true;
+		Window newWindow = WindowFactory.create(windowName);
+		newWindow.setLastWindowName(this.windowName);
+		newWindow.open();
+		close();
+	}
+	
+	public void hide() {
+		getShell().setVisible(false);
+	}
+	
+	public void close() {
+		getShell().close();
 	}
 	
 	public void open() {
@@ -55,5 +130,29 @@ public class Window {
 
 	public Display getDisplay() {
 		return display;
+	}
+
+	public String getWindowName() {
+		return windowName;
+	}
+
+	public void setWindowName(String windowName) {
+		this.windowName = windowName;
+	}
+
+	public String getLastWindowName() {
+		return lastWindowName;
+	}
+
+	public void setLastWindowName(String lastWindowName) {
+		this.lastWindowName = lastWindowName;
+	}
+
+	public boolean isJumped() {
+		return isJumped;
+	}
+
+	public void setJumped(boolean isJumped) {
+		this.isJumped = isJumped;
 	}
 }

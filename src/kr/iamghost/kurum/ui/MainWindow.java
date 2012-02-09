@@ -22,7 +22,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -40,7 +39,6 @@ import org.eclipse.swt.widgets.Tray;
 import org.eclipse.swt.widgets.TrayItem;
 
 public class MainWindow extends Window implements GlobalEventListener{
-	private PropertyUtil kurumConfig;
 	private AppSyncr appSyncr;
 	private TrayItem trayItem;
 	private Window logWindow;
@@ -64,7 +62,8 @@ public class MainWindow extends Window implements GlobalEventListener{
 	public void init() {
 		Shell shell = getShell();
 		shell.setText(Environment.KURUMTITLE);
-		shell.setSize(400, 250);
+		shell.setSize(250, 250);
+		centre();
 		
 		initForm();
 		initTrayAndMenu();
@@ -76,7 +75,8 @@ public class MainWindow extends Window implements GlobalEventListener{
 			public void shellClosed(ShellEvent e) {
 				if (!quit) {
 					getShell().setVisible(false);
-					Global.set("ShowToolTip", Language.getString("TrayNotice"));
+					if (!isJumped())
+						Global.set("LastWindowClosed", true);
 				}
 				e.doit = quit;
 			}
@@ -90,7 +90,6 @@ public class MainWindow extends Window implements GlobalEventListener{
 		
 		Global.addEventlistener(this);
 		
-		kurumConfig = PropertyUtil.getDefaultProperty();
 		checkFirstLaunch();
 		
 		appSyncr = new AppSyncr();
@@ -133,14 +132,14 @@ public class MainWindow extends Window implements GlobalEventListener{
 		});
 		
 		button = new Button(shell, SWT.PUSH);
-		button.setText(Language.getString("AppConfigManager"));
+		button.setText(Language.getString("SyncManager"));
 		button.setLayoutData(horizSpangridData);
 		button.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				checkDropboxLoginAndRaiseError();
 				if (DropboxUtil.getDefaultDropbox().isLinked())
-					onClickAppManagerButton();
+					onClickSyncManagerButton();
 			}
 			
 			@Override
@@ -183,20 +182,14 @@ public class MainWindow extends Window implements GlobalEventListener{
 		});
 	}
 	
-	private void onClickAppManagerButton() {
-		openWindow("AppConfigManager");
+	private void onClickSyncManagerButton() {
+		jumpToNewWindow("SyncManager");
 	}
 	
 	private void onClickLoginButton() {
-		openWindow("DropboxLogin");
+		jumpToNewWindow("DropboxLogin");
 	}
-	
-	private void openWindow(String windowName) {
-		Window newWindow = WindowFactory.create(windowName);
-		newWindow.open();
-		newWindow.show(true);
-	}
-	
+
 	private void checkDropboxLoginAndRaiseError() {
 		if (!DropboxUtil.getDefaultDropbox().isLinked()) Global.set("DropboxLoginError", true);
 	}
@@ -206,14 +199,10 @@ public class MainWindow extends Window implements GlobalEventListener{
 		
 		if (tray != null)
 		{
-			
-			Image image = getDisplay().getSystemImage(SWT.ICON_INFORMATION);
-			
 			trayItem = new TrayItem(tray, SWT.NONE);
-			trayItem.setImage(image);
+			trayItem.setImage(getShell().getImage());
 			
 			final Menu menu = new Menu(getShell(), SWT.POP_UP);
-
 			MenuItem menuItem = new MenuItem(menu, SWT.PUSH);
 			menuItem.setText(Language.getString("OpenKurum"));
 			menuItem.addListener(SWT.Selection, new Listener() {
@@ -315,6 +304,10 @@ public class MainWindow extends Window implements GlobalEventListener{
 			if (appSyncr != null)
 				appSyncr.syncAllApps();
 		}
+		else if(e.getEventKey().equals("LastWindowClosed")) {
+			Global.set("ShowToolTip", Language.getString("TrayNotice"));
+			setJumped(false);
+		}
 	}
 
 	private void handleVariableNotFoundError(AppConfigVariable var) {
@@ -334,6 +327,7 @@ public class MainWindow extends Window implements GlobalEventListener{
 			}
 			
 			if (dir != null) {
+				PropertyUtil kurumConfig = PropertyUtil.getDefaultProperty();
 				String parsedDir = Environment.parsePath(dir);
 				Environment.addVariable(var.getName(), parsedDir);
 				kurumConfig.setString("var_" + var.getName(), parsedDir);

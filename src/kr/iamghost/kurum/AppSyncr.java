@@ -138,7 +138,7 @@ public class AppSyncr implements ProcessWatcherListener {
 			
 			saveSyncInfo(upload);
 			
-			showTooltip(Language.getFormattedString("UploadFinished", config.getAppName()));
+			showTooltip(Language.getFormattedString("UploadFinished", config.getAppTitle()));
 		}
 	}
 	
@@ -194,7 +194,7 @@ public class AppSyncr implements ProcessWatcherListener {
 		DropboxEntry meta = dropbox.getMetadata(config.getDropboxZipPath());
 		saveSyncInfo(meta);
 		
-		showTooltip(Language.getFormattedString("DownloadFinished", config.getAppName()));
+		showTooltip(Language.getFormattedString("DownloadFinished", config.getAppTitle()));
 	}
 	
 	public void showTooltip(final String text) {

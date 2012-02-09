@@ -24,7 +24,6 @@ public class DropboxUtil {
 	final static private AccessType ACCESS_TYPE = AccessType.APP_FOLDER;
 	private DropboxAPI<WebAuthSession> client;
 	private WebAuthSession session;
-	private PropertyUtil config;
 	private boolean isLoggedIn = false;
 	private static DropboxUtil defaultDropbox;
 	
@@ -37,8 +36,6 @@ public class DropboxUtil {
 	}
 	
 	public DropboxUtil() {
-		config = new PropertyUtil().loadDefaultFile();
-		
 		refreshClient();
 		loadSavedKeys();
 	}
@@ -56,7 +53,6 @@ public class DropboxUtil {
 	public DropboxEntry getMetadata(String path) {
 		return getMetadata(path, 0, null, true, null);
 	}
-	
 	
 	public DropboxEntry getMetadata(String path, int fileLimit, String hash, boolean list, String rev) {
 		DropboxEntry entry = new DropboxEntry();
@@ -140,6 +136,15 @@ public class DropboxUtil {
 		return entry;
 	}
 	
+	public void Delete(String path) {
+		try {
+			client.delete(path);
+		} catch (DropboxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public void loadSavedKeys() {
 		PropertyUtil config = new PropertyUtil().loadDefaultFile();
 		String auth_key = config.getString("oauth_key");
@@ -187,7 +192,10 @@ public class DropboxUtil {
 		Account account = null;
 		try {
 			account = client.accountInfo();
+		} catch (DropboxUnlinkedException e) {
+			//just return null
 		} catch (DropboxException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -234,14 +242,16 @@ public class DropboxUtil {
 	public void deleteToken() {
 		if (isLinked()) {
 			session.unlink();
+			isLoggedIn = false;
 		}
 		saveTokenToConfig("", "");
 	}
 	
 	protected void saveTokenToConfig(String key, String secret) {
-		config.setString("oauth_key", key);
-		config.setString("oauth_secret", secret);
-		config.save();
+		PropertyUtil kurumConfig = PropertyUtil.getDefaultProperty();
+		kurumConfig.setString("oauth_key", key);
+		kurumConfig.setString("oauth_secret", secret);
+		kurumConfig.save();
 	}
 
 }

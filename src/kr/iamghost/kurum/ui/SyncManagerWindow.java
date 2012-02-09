@@ -9,39 +9,38 @@ import kr.iamghost.kurum.AppConfigParser;
 import kr.iamghost.kurum.Environment;
 import kr.iamghost.kurum.FileUtil;
 import kr.iamghost.kurum.Global;
+import kr.iamghost.kurum.GlobalEvent;
+import kr.iamghost.kurum.GlobalEventListener;
 import kr.iamghost.kurum.Language;
 import kr.iamghost.kurum.Util;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
-public class AppConfigManagerWindow extends Window {
+public class SyncManagerWindow extends Window implements GlobalEventListener {
 	private Combo appConfigCombo;
 	private ArrayList<AppConfig> appConfigs;
 	private AppConfig currentAppConfig;
-	private Label appTitleLabel;
-	private Label appNameLabel;
-	private Label authorLabel;
 	private Button deleteButton;
 	
-	public AppConfigManagerWindow(Display display) {
+	public SyncManagerWindow(Display display) {
 		super(display);
 		// TODO Auto-generated constructor stub
 	}
 	
 	public void init() {
+		Global.addEventlistener(this);
+		
 		Shell shell = getShell();
-		shell.setText(Language.getString("AppConfigManager"));
+		shell.setText(Language.getString("SyncManager"));
 		shell.setSize(300, 300);
 		
 		Button button;
@@ -50,25 +49,16 @@ public class AppConfigManagerWindow extends Window {
 		gridLayout.numColumns = 2;
 		shell.setLayout(gridLayout);
 		
-		GridData defaultGridData;
-		defaultGridData = new GridData();
-		defaultGridData.horizontalSpan = 2;
-		defaultGridData.horizontalAlignment = SWT.FILL;
-		defaultGridData.grabExcessHorizontalSpace = true;
-		
-		GridData fillerGridData;
-		fillerGridData = new GridData();
-		fillerGridData.horizontalAlignment = SWT.FILL;
-		fillerGridData.grabExcessHorizontalSpace = true;
-		
-		GridData horizSpanGridData;
-		horizSpanGridData = new GridData();
-		horizSpanGridData.horizontalSpan = 2;
-		horizSpanGridData.horizontalAlignment = SWT.FILL;
-		horizSpanGridData.grabExcessHorizontalSpace = true;
+		Label newLabel = new Label(shell, SWT.LEFT);
+		newLabel.setText(Language.getString("RecentAppConfigs"));
 		
 		appConfigCombo = new Combo(shell, SWT.READ_ONLY);
-		appConfigCombo.setLayoutData(defaultGridData);
+		appConfigCombo.setLayoutData(
+				new GridDataBuilder()
+					.spanHorizontal(2)
+					.fillHorizontal()
+					.create());
+		
 		appConfigCombo.addSelectionListener(new SelectionListener() {
 			
 			@Override
@@ -82,43 +72,13 @@ public class AppConfigManagerWindow extends Window {
 			}
 		});
 		
-		
-		new Label(shell, SWT.LEFT).setText(Language.getString("AppTitle") + ":");
-		
-		appTitleLabel = new Label(shell, SWT.LEFT);
-		appTitleLabel.setLayoutData(fillerGridData);
-		
-		new Label(shell, SWT.LEFT).setText(Language.getString("AppName") + ":");
-		
-		appNameLabel = new Label(shell, SWT.LEFT);
-		appNameLabel.setLayoutData(fillerGridData);
-		
-		new Label(shell, SWT.LEFT).setText(Language.getString("Author") + ":");
-		
-		authorLabel = new Label(shell, SWT.LEFT);
-		authorLabel.setLayoutData(fillerGridData);
-		
-		
-		deleteButton = new Button(shell, SWT.PUSH);
-		deleteButton.setText(Language.getString("DeleteCurrentAppConfig"));
-		deleteButton.setLayoutData(horizSpanGridData);
-		deleteButton.addSelectionListener(new SelectionListener() {
-			
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				onClickDeleteCurrentAppConfigButton();
-			}
-			
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
-		
 		button = new Button(shell, SWT.PUSH);
 		button.setText(Language.getString("ImportAppConfigFile"));
-		button.setLayoutData(horizSpanGridData);
+		button.setLayoutData(
+				new GridDataBuilder()
+					.fillHorizontal()
+					.create());
+		
 		button.addSelectionListener(new SelectionListener() {
 			
 			@Override
@@ -133,9 +93,40 @@ public class AppConfigManagerWindow extends Window {
 			}
 		});
 		
+		deleteButton = new Button(shell, SWT.PUSH);
+		deleteButton.setText(Language.getString("DeleteCurrentAppConfig"));
+		deleteButton.setLayoutData(
+				new GridDataBuilder()
+					.fillHorizontal()
+					.create());
+		deleteButton.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				onClickDeleteCurrentAppConfigButton();
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
+		new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(
+				new GridDataBuilder()
+					.spanHorizontal(2)
+					.fillHorizontal()
+					.create());
+		
 		button = new Button(shell, SWT.PUSH);
 		button.setText(Language.getString("RefreshAppConfigs"));
-		button.setLayoutData(horizSpanGridData);
+		button.setLayoutData(
+				new GridDataBuilder()
+					.spanHorizontal(2)
+					.fillHorizontal()
+					.create());
+		
 		button.addSelectionListener(new SelectionListener() {
 			
 			@Override
@@ -152,7 +143,12 @@ public class AppConfigManagerWindow extends Window {
 		
 		button = new Button(shell, SWT.PUSH);
 		button.setText(Language.getString("BrowseAppConfigDirectory"));
-		button.setLayoutData(horizSpanGridData);
+		button.setLayoutData(
+				new GridDataBuilder()
+				.spanHorizontal(2)
+				.fillHorizontal()
+				.create());
+		
 		button.addSelectionListener(new SelectionListener() {
 			
 			@Override
@@ -180,7 +176,6 @@ public class AppConfigManagerWindow extends Window {
 			int select = appConfigCombo.getSelectionIndex();
 			
 			if (select >= 0) {
-				AppConfig currentAppConfig = appConfigs.get(select);
 				FileUtil.delete(currentAppConfig.getOriginalFile());
 				onClickRefreshAppConfigsButton();
 			}
@@ -188,35 +183,7 @@ public class AppConfigManagerWindow extends Window {
 	}
 
 	protected void onClickImportAppConfigButton() {
-		FileDialog dlg = new FileDialog(getShell(), SWT.OPEN);
-		String[] filter = {"*.xml"};
-		dlg.setFilterExtensions(filter);
-		
-		String path = dlg.open();
-
-		if (path != null) {
-			File configFile = new File(path);
-			AppConfigParser parser = new AppConfigParser();
-			parser.parse(path);
-			
-			AppConfig tempConfig = parser.getAppConfig();
-			
-			if (tempConfig != null && tempConfig.getAppName() != null
-					&& tempConfig.getAppTitle() != null) {
-				File targetFile = new File(Environment.KURUM + "/AppConfigs/" + configFile.getName());
-				FileUtil.copy(configFile, targetFile);
-				
-				Global.setObject("LastShell", getShell());
-				Global.set("MessageBox",
-						Language.getFormattedString("AppConfigImported", tempConfig.getAppTitle()));
-				onClickRefreshAppConfigsButton();
-			}
-			else
-			{
-				Global.setObject("LastShell", getShell());
-				Global.set("MessageBox", Language.getString("ConfigImportFailed"));
-			}
-		}
+		WindowFactory.create("AppConfigImport").open();
 	}
 
 	private void onClickRefreshAppConfigsButton() {
@@ -231,9 +198,6 @@ public class AppConfigManagerWindow extends Window {
 		
 		if (index >= 0)
 		{
-			appTitleLabel.setText(currentAppConfig.getAppTitle());
-			appNameLabel.setText(currentAppConfig.getAppName());
-			authorLabel.setText(currentAppConfig.getAuthor());
 			deleteButton.setEnabled(true);
 		}
 		else {
@@ -269,6 +233,14 @@ public class AppConfigManagerWindow extends Window {
 				appConfigCombo.select(0);
 				onAppConfigListSelected(0);	
 			}
+		}
+	}
+
+	@Override
+	public void onGlobalSet(GlobalEvent e) {
+		// TODO Auto-generated method stub
+		if (e.getEventKey().equals("AppConfigImportFinished")) {
+			onClickRefreshAppConfigsButton();
 		}
 	}
 }

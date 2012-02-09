@@ -63,6 +63,7 @@ public class LogWindow extends Window implements GlobalEventListener {
 			}
 		});
 		
+		setJumped(true);
 		Global.addEventlistener(this);
 	}
 
