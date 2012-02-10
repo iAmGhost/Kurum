@@ -1,38 +1,42 @@
 package kr.iamghost.kurum.ui;
 
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 
+import kr.iamghost.kurum.images.Images;
+
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
 public class WindowFactory {
-	private static Display mDisplay;
-	private static HashMap<String, String> mWindows;
+	private static Image image;
+	private static Display display;
+	private static HashMap<String, String> windowList;
 	
 	static {
-		mWindows = new HashMap<String, String>();
-		mWindows.put("DropboxLogin", "DropboxLoginWindow");
-		mWindows.put("Main", "MainWindow");
-		mWindows.put("Log", "LogWindow");
-		mWindows.put("SyncManager", "SyncManagerWindow");
-		mWindows.put("AppConfigImport", "AppConfigImportWindow");
-	}
-	
-	public static void setDisplay(Display display) {
-		mDisplay = display;
-	}
-	
-	public static Display getDisplay(Display display) {
-		return mDisplay;
+		windowList = new HashMap<String, String>();
+		windowList.put("DropboxLogin", "DropboxLoginWindow");
+		windowList.put("Main", "MainWindow");
+		windowList.put("Log", "LogWindow");
+		windowList.put("SyncManager", "SyncManagerWindow");
+		windowList.put("AppConfigImport", "AppConfigImportWindow");
+		
+		display = Display.getCurrent();
+		
+		InputStream is = Images.class.getResourceAsStream("Kurum_512px.png");
+		image = new Image(display, is);
 	}
 	
 	public static Window create(String windowName) {
 		try {
 			String packageName = WindowFactory.class.getPackage().getName();
-			String windowClassName = packageName + "." + mWindows.get(windowName);
+			String windowClassName = packageName + "." + windowList.get(windowName);
 			Constructor<?> windowClass = Class.forName(windowClassName).getConstructor(Display.class);
-			Window instance = (Window) windowClass.newInstance(mDisplay);
+			Window instance = (Window) windowClass.newInstance(display);
 			instance.setWindowName(windowName);
+			instance.getShell().setImage(image);
+			instance.init();
 			return instance;
 		}
 		catch (Exception e) {

@@ -10,8 +10,7 @@ public class Main {
 
 	public static void main (String [] args) {
 	    Display display = new Display();
-	    WindowFactory.setDisplay(display);
-	    
+
 	    Window mainWindow = WindowFactory.create("Main");
 	    
 	    while (!mainWindow.isDisposed()) {
@@ -19,7 +18,6 @@ public class Main {
 	    }
 	    
 	    display.dispose();
-	    
 	    System.exit(0);
 	}
 }

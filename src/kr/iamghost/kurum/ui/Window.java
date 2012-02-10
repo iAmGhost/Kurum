@@ -1,13 +1,9 @@
 package kr.iamghost.kurum.ui;
 
-import java.io.InputStream;
-
 import kr.iamghost.kurum.Global;
-import kr.iamghost.kurum.images.Images;
 
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Monitor;
@@ -23,22 +19,13 @@ public class Window {
 	public Window(Display display) {
 		shell = new Shell(display);
 		this.display = display;
-		initIcon();
 		initWindow();
-		init();
-	}
-	
-	public void initIcon() {
-		InputStream is = Images.class.getResourceAsStream("Kurum_512px.png");
-		shell.setImage(new Image(display, is));
 	}
 	
 	public Window(Display display, int style) {
 		shell = new Shell(display, style);
 		this.display = display;
-		initIcon();
 		initWindow();
-		init();
 	}
 	
 	private void initWindow() {
