@@ -214,8 +214,10 @@ public class AppConfigImportWindow extends Window {
 		if (dropbox.isLinked()) {
 			DropboxEntry entry = dropbox.getMetadata("/AppConfigs", 100, null, true, null);
 			
-			for (Entry file : entry.getContents()) {
-				recentConfigList.add(file.fileName());
+			if (entry.isValid) {
+				for (Entry file : entry.getContents()) {
+					recentConfigList.add(file.fileName());
+				}	
 			}
 		}
 	}

@@ -50,7 +50,7 @@ public class SyncManagerWindow extends Window implements GlobalEventListener {
 		shell.setLayout(gridLayout);
 		
 		Label newLabel = new Label(shell, SWT.LEFT);
-		newLabel.setText(Language.getString("RecentAppConfigs"));
+		newLabel.setText(Language.getString("CurrentAppConfigs") + ":");
 		
 		appConfigCombo = new Combo(shell, SWT.READ_ONLY);
 		appConfigCombo.setLayoutData(
