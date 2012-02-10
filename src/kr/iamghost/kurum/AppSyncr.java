@@ -22,6 +22,9 @@ public class AppSyncr implements ProcessWatcherListener {
 	public AppSyncr() {
 		dropbox = DropboxUtil.getDefaultDropbox();
 		if (!dropbox.isLinked()) Global.set("DropboxLoginError", true);
+		
+		processWatcher = new ProcessWatcher();
+		processWatcher.addEventListener(this);
 	}
 	
 	
@@ -37,7 +40,7 @@ public class AppSyncr implements ProcessWatcherListener {
 		if (dropbox.isLinked() == true)
 		{
 			for (final AppConfig app : appConfigs.values()) {
-				if (app.checkAllVars() && !app.isSyncing())
+				if (app.checkAllVars())
 					syncApp(app, false);
 			}
 		}
@@ -72,10 +75,10 @@ public class AppSyncr implements ProcessWatcherListener {
 	}
 	
 	public void refreshProcessWatcher() {
-		processWatcher = new ProcessWatcher();
+		processWatcher.clear();
 		
 		for (AppConfig app : appConfigs.values()) {
-			processWatcher.addProcess(app.getProcessName(), this);
+			processWatcher.addProcess(app.getProcessName());
 		}
 		processWatcher.start(PROCESS_WATCH_PERIOD);
 	}
@@ -212,7 +215,7 @@ public class AppSyncr implements ProcessWatcherListener {
 	}
 
 	public void syncApp(AppConfig config, boolean force) {
-		if (config != null) {
+		if (config != null && !config.isSyncing()) {
 			config.setSyncing(true);
 			
 			String appName = config.getAppName();

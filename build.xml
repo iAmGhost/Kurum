@@ -91,7 +91,7 @@
 			<config dontWrapJar="false" headerType="gui" jarPath="dist/Kurum.jar"
 				outfile="dist/Kurum.exe" customProcName="true"
 				icon="src/kr/iamghost/kurum/images/Kurum.ico">
-				<jre minVersion="1.5.0" jdkPreference="preferJre" maxHeapSize="50"/>
+				<jre minVersion="1.5.0" jdkPreference="preferJre" maxHeapSize="10"/>
 				<singleInstance mutexName="Kurum"/>
 			</config>
 		</launch4j>

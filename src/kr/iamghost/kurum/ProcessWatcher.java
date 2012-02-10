@@ -38,6 +38,11 @@ public class ProcessWatcher implements ActionListener {
 		return !appearedList.isEmpty();
 	}
 	
+	public void clear() {
+		watchList.clear();
+		appearedList.clear();
+	}
+	
 	public void checkProcesses() {
 		ProcessUtil.refresh();
 		
@@ -62,9 +67,8 @@ public class ProcessWatcher implements ActionListener {
 		}
 	}
 	
-	public void addProcess(String processName, ProcessWatcherListener l) {
+	public void addProcess(String processName) {
 		watchList.add(processName);
-		addEventListener(l);
 	}
 	
 	public void addEventListener(ProcessWatcherListener l) {
