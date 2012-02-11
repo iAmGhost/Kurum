@@ -140,7 +140,7 @@ public class AppSyncr implements ProcessWatcherListener, GlobalEventListener {
 			newZip.close();
 
 			DropboxEntry upload = dropbox.upload(new File(tempZipFile.getAbsolutePath()),
-					config.getDropboxZipPath(), true);
+					config.getDropboxZipPath(), kurumConfig.getString(appName + ".zip_rev"), true);
 			
 			saveSyncInfo(upload);
 			
@@ -222,7 +222,8 @@ public class AppSyncr implements ProcessWatcherListener, GlobalEventListener {
 		
 	}
 	public void saveSyncInfo(DropboxEntry entry) {
-		kurumConfig.setString(entry.fileName, entry.modifydate.toString());
+		kurumConfig.setString(entry.fileName + "_date", entry.modifydate.toString());
+		kurumConfig.setString(entry.fileName + "_rev", entry.rev);
 	}
 
 	public void syncApp(AppConfig config, boolean force) {
@@ -230,7 +231,7 @@ public class AppSyncr implements ProcessWatcherListener, GlobalEventListener {
 		if (config != null && !config.isSyncing() && config.checkAllVars()) {
 			String appName = config.getAppName();
 			String archivePath = config.getDropboxZipPath();
-			Date localDate = Util.stringToDate(kurumConfig.getString(appName + ".zip"));
+			Date localDate = Util.stringToDate(kurumConfig.getString(appName + ".zip" + "_date"));
 			
 			DropboxEntry lastSync = dropbox.getMetadata(archivePath);
 			

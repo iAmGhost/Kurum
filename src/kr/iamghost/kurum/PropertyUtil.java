@@ -92,6 +92,7 @@ public class PropertyUtil {
 		try {
 			FileOutputStream os = new FileOutputStream(propertyFilePath);
 			property.store(os, "");
+			os.close();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
