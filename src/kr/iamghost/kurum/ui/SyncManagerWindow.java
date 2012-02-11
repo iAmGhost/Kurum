@@ -50,6 +50,11 @@ public class SyncManagerWindow extends Window implements GlobalEventListener {
 		shell.setLayout(gridLayout);
 		
 		Label newLabel = new Label(shell, SWT.LEFT);
+		newLabel.setLayoutData(
+				new GridDataBuilder()
+					.spanHorizontal(2)
+					.create());
+		
 		newLabel.setText(Language.getString("CurrentAppConfigs") + ":");
 		
 		appConfigCombo = new Combo(shell, SWT.READ_ONLY);
@@ -113,6 +118,48 @@ public class SyncManagerWindow extends Window implements GlobalEventListener {
 			}
 		});
 		
+		Button forceUploadButton = new Button(shell, SWT.PUSH);
+		forceUploadButton.setText(Language.getString("ForceUpload"));
+		forceUploadButton.setLayoutData(
+				new GridDataBuilder()
+					.fillHorizontal()
+					.create());
+		forceUploadButton.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				onClickForceUploadButton();
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
+		Button forceDownloadButton = new Button(shell, SWT.PUSH);
+		forceDownloadButton.setText(Language.getString("ForceDownload"));
+		forceDownloadButton.setLayoutData(
+				new GridDataBuilder()
+					.fillHorizontal()
+					.create());
+		forceDownloadButton.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				onClickForceDownloadButton();
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
 		new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(
 				new GridDataBuilder()
 					.spanHorizontal(2)
@@ -166,16 +213,53 @@ public class SyncManagerWindow extends Window implements GlobalEventListener {
 		loadAppConfigList();
 	}
 	
+	protected void onClickForceUploadButton() {
+		
+		int select = appConfigCombo.getSelectionIndex();
+			
+		if (select >= 0) {
+			MessageBox msgBox = new MessageBox(getShell(), SWT.YES | SWT.NO | SWT.ICON_INFORMATION);
+			msgBox.setText(Environment.KURUMTITLE);
+			msgBox.setMessage(Language.getFormattedString("ConfirmForceUpload",
+					currentAppConfig.getAppTitle()));
+			
+			if (msgBox.open() == SWT.YES) {
+				Global.setObject("UploadApp", currentAppConfig);
+			}
+		}
+	}
+
+	protected void onClickForceDownloadButton() {
+		int select = appConfigCombo.getSelectionIndex();
+		
+		if (select >= 0) {
+			MessageBox msgBox = new MessageBox(getShell(), SWT.YES | SWT.NO | SWT.ICON_INFORMATION);
+			msgBox.setText(Environment.KURUMTITLE);
+			msgBox.setMessage(Language.getFormattedString("ConfirmForceDownload",
+					currentAppConfig.getAppTitle()));
+			
+			if (msgBox.open() == SWT.YES) {
+				Global.setObject("DownloadApp", currentAppConfig);
+			}
+		}
+	}
+
 	protected void onClickDeleteCurrentAppConfigButton() {
 		
 		MessageBox msgBox = new MessageBox(getShell(), SWT.YES | SWT.NO | SWT.ICON_INFORMATION);
 		msgBox.setText(Environment.KURUMTITLE);
-		msgBox.setMessage("ConfirmDeleteAppConfig");
+		msgBox.setMessage(Language.getString("ConfirmDeleteAppConfig"));
 		
 		if (msgBox.open() == SWT.YES) {
 			int select = appConfigCombo.getSelectionIndex();
 			
 			if (select >= 0) {
+				Global.set("ShowToolTip",
+						Language.getFormattedString("AppConfigDeleted",
+								currentAppConfig.getAppTitle())
+								);
+				
+				currentAppConfig.resetAllVars();
 				FileUtil.delete(currentAppConfig.getOriginalFile());
 				onClickRefreshAppConfigsButton();
 			}
@@ -190,7 +274,6 @@ public class SyncManagerWindow extends Window implements GlobalEventListener {
 		appConfigCombo.removeAll();
 		loadAppConfigList();
 		Global.set("RefreshAppConfigs", true);
-		Global.set("WantSyncManually", true);
 	}
 
 	private void onAppConfigListSelected(int index) {

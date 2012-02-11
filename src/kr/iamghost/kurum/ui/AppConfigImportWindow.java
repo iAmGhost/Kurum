@@ -187,6 +187,7 @@ public class AppConfigImportWindow extends Window {
 				&& tempConfig.getAppTitle() != null) {
 			
 			Global.set("AppConfigImportFinished", true);
+			askToSync(tempConfig);
 			showImportFinishedMessage(tempConfig.getAppTitle());
 			close();
 		}
@@ -243,6 +244,8 @@ public class AppConfigImportWindow extends Window {
 				
 				showImportFinishedMessage(tempConfig.getAppTitle());
 				
+				askToSync(tempConfig);
+				
 				DropboxUtil dropbox = DropboxUtil.getDefaultDropbox();
 				if (dropbox.isLinked()) {
 					File file = tempConfig.getOriginalFile();
@@ -261,7 +264,16 @@ public class AppConfigImportWindow extends Window {
 	}
 	
 	private void showImportFinishedMessage(String appTitle) {
-		Global.setObject("LastShell", getShell());
-		Global.set("MessageBox", Language.getFormattedString("AppConfigImported", appTitle));
+		Global.set("ShowToolTip", Language.getFormattedString("AppConfigImported", appTitle));
+	}
+	
+	private void askToSync(AppConfig config) {
+		MessageBox msgBox = new MessageBox(getShell(), SWT.YES | SWT.NO | SWT.ICON_QUESTION);
+		msgBox.setText(Environment.KURUMTITLE);
+		msgBox.setMessage(Language.getFormattedString("ConfirmFirstSync", config.getAppTitle()));
+		
+		if (msgBox.open() == SWT.YES) {
+			Global.setObject("SyncNow", config);
+		}
 	}
 }

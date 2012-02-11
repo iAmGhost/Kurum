@@ -77,6 +77,17 @@ public class AppConfig {
 		vars.add(value);
 	}
 	
+	public void resetAllVars() {
+		PropertyUtil kurumConfig = PropertyUtil.getDefaultProperty();
+		
+		for (AppConfigVariable var : vars) {
+			Environment.removeVariable(var.getName());
+			kurumConfig.setString("var_" + var.getName(), "");
+		}
+		
+		kurumConfig.setString(appName + ".zip", "");
+	}
+	
 	public boolean checkAllVars() {
 		boolean errorNotFound = true;
 		
@@ -84,6 +95,7 @@ public class AppConfig {
 		
 		for (AppConfigVariable var : vars) {
 			String dataInConfig = kurumConfig.getString("var_" + var.getName());
+			
 			if (Environment.getVariableData(var.getName()) == null) {
 				if (!dataInConfig.equals("")) {
 					Environment.addVariable(var.getName(), dataInConfig);
@@ -92,10 +104,16 @@ public class AppConfig {
 				{
 					errorNotFound = false;
 					Global.setObject("VariableNotFoundError", var);
+					Global.setObject("VariableNotFoundAppConfig", this);
+					break;
 				}
 			}
+			else
+			{
+				Environment.getVariableData(var.getName());
+			}
 		}
-		
+
 		return errorNotFound;
 	}
 

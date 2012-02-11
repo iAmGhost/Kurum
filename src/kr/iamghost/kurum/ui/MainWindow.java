@@ -271,9 +271,6 @@ public class MainWindow extends Window implements GlobalEventListener{
 			appSyncr.reload();
 			Log.write("Reload AppConfigs");
 		}
-		else if (e.getEventKey().equals("WantSyncManually")) {
-			appSyncr.syncAllApps();
-		}
 		else if(e.getEventKey().equals("VariableNotFoundError")) {
 			final AppConfigVariable var = (AppConfigVariable)e.getObject();
 			getDisplay().asyncExec(new Runnable() {
@@ -311,30 +308,27 @@ public class MainWindow extends Window implements GlobalEventListener{
 	}
 
 	private void handleVariableNotFoundError(AppConfigVariable var) {
-		while (true) {
-			String dir = null;
-			
-			if (var.getType() == VarType.DIRECTORY) {
-				DirectoryDialog dlg = new DirectoryDialog(getShell());
-				dlg.setMessage(var.getMessage());
-				dir = dlg.open();
-			}
-			else {
-				FileDialog dlg = new FileDialog(getShell(), SWT.OPEN);
-				dlg.setFilterExtensions(var.getFilters());
-				dlg.setText(var.getMessage());
-				dir = dlg.open();
-			}
-			
-			if (dir != null) {
-				PropertyUtil kurumConfig = PropertyUtil.getDefaultProperty();
-				String parsedDir = Environment.parsePath(dir);
-				Environment.addVariable(var.getName(), parsedDir);
-				kurumConfig.setString("var_" + var.getName(), parsedDir);
-				break;
-			}
+		String dir = null;
+		
+		if (var.getType() == VarType.DIRECTORY) {
+			DirectoryDialog dlg = new DirectoryDialog(getShell());
+			dlg.setMessage(var.getMessage());
+			dir = dlg.open();
+		}
+		else {
+			FileDialog dlg = new FileDialog(getShell(), SWT.OPEN);
+			dlg.setFilterExtensions(var.getFilters());
+			dlg.setText(var.getMessage());
+			dir = dlg.open();
 		}
 		
-		appSyncr.syncAllApps();
+		if (dir != null) {
+			PropertyUtil kurumConfig = PropertyUtil.getDefaultProperty();
+			String parsedDir = Environment.parsePath(dir);
+			Environment.addVariable(var.getName(), parsedDir);
+			kurumConfig.setString("var_" + var.getName(), parsedDir);
+		}
+		
+		Global.setObject("SyncNow", Global.getObject("VariableNotFoundAppConfig"));
 	}
 }

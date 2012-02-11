@@ -41,7 +41,6 @@ public class GridDataBuilder {
 	}
 	
 	public GridDataBuilder fillHorizontal() {
-		gridData.grabExcessHorizontalSpace = true;
 		gridData.horizontalAlignment = SWT.FILL;
 		gridData.grabExcessHorizontalSpace = true;
 		

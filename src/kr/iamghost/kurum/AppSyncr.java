@@ -10,7 +10,7 @@ import java.util.TimerTask;
 
 import org.eclipse.swt.widgets.Display;
 
-public class AppSyncr implements ProcessWatcherListener {
+public class AppSyncr implements ProcessWatcherListener, GlobalEventListener {
 	private final static int PROCESS_WATCH_PERIOD = 1000 * 5;
 	private final static int AUTOMATIC_SYNC_PERIOD = 1000 * 60 * 5;
 	private HashMap<String, AppConfig> appConfigs;
@@ -25,6 +25,8 @@ public class AppSyncr implements ProcessWatcherListener {
 		
 		processWatcher = new ProcessWatcher();
 		processWatcher.addEventListener(this);
+		
+		Global.addEventlistener(this);
 	}
 	
 	
@@ -40,8 +42,7 @@ public class AppSyncr implements ProcessWatcherListener {
 		if (dropbox.isLinked() == true)
 		{
 			for (final AppConfig app : appConfigs.values()) {
-				if (app.checkAllVars())
-					syncApp(app, false);
+				syncApp(app, false);
 			}
 		}
 	}
@@ -110,6 +111,8 @@ public class AppSyncr implements ProcessWatcherListener {
 	}
 	
 	public void uploadToDropbox(AppConfig config) {
+		config.setSyncing(true);
+		
 		showTooltip(Language.getFormattedString("StartSyncing", config.getAppTitle()));
 		
 		Iterator<AppConfigFileEntry> it = config.getFilesIterator();
@@ -143,9 +146,13 @@ public class AppSyncr implements ProcessWatcherListener {
 			
 			showTooltip(Language.getFormattedString("UploadFinished", config.getAppTitle()));
 		}
+		
+		config.setSyncing(false);
 	}
 	
 	public void downloadToLocal(AppConfig config) {
+		config.setSyncing(true);
+		
 		showTooltip(Language.getFormattedString("StartSyncing", config.getAppTitle()));
 		
 		Iterator<AppConfigFileEntry> it = config.getFilesIterator();
@@ -198,6 +205,8 @@ public class AppSyncr implements ProcessWatcherListener {
 		saveSyncInfo(meta);
 		
 		showTooltip(Language.getFormattedString("DownloadFinished", config.getAppTitle()));
+		
+		config.setSyncing(false);
 	}
 	
 	public void showTooltip(final String text) {
@@ -215,9 +224,8 @@ public class AppSyncr implements ProcessWatcherListener {
 	}
 
 	public void syncApp(AppConfig config, boolean force) {
-		if (config != null && !config.isSyncing()) {
-			config.setSyncing(true);
-			
+		
+		if (config != null && !config.isSyncing() && config.checkAllVars()) {
 			String appName = config.getAppName();
 			String archivePath = config.getDropboxZipPath();
 			Date localDate = Util.stringToDate(kurumConfig.getString(appName + ".zip"));
@@ -258,9 +266,41 @@ public class AppSyncr implements ProcessWatcherListener {
 					Log.write("Same, POMF =3 :" + config.getAppTitle());
 				}	
 			}
-			
-			config.setSyncing(false);
 		}
-		kurumConfig.save();
+	}
+
+
+	@Override
+	public void onGlobalSet(GlobalEvent e) {
+		String eventKey = e.getEventKey();
+		
+		if (eventKey.equals("UploadApp")) {
+			AppConfig config = (AppConfig)e.getObject();
+			String processName = config.getProcessName();
+			
+			if (appConfigs.containsKey(processName)) {
+				config = appConfigs.get(processName);
+			}
+			
+			uploadToDropbox(config);
+		}
+		else if (eventKey.equals("DownloadApp")) {
+			AppConfig config = (AppConfig)e.getObject();
+			String processName = config.getProcessName();
+			
+			if (appConfigs.containsKey(processName)) {
+				config = appConfigs.get(processName);
+			}
+			
+			downloadToLocal(config);
+		}
+		else if(eventKey.equals("SyncNow")) {
+			if (e.getObject() == null) {
+				syncAllApps();
+			}
+			else {
+				syncApp((AppConfig)e.getObject(), false);
+			}
+		}
 	}
 }

@@ -74,6 +74,10 @@ public class Environment {
 		envVars.put(name, new EnvironmentVariable("%" + name + "%", value));
 	}
 	
+	public static void removeVariable(String name) {
+		envVars.remove(name);
+	}
+	
 	public static String parsePath(String path) {
 		path = path.replaceAll("\\\\", "/");
 		
