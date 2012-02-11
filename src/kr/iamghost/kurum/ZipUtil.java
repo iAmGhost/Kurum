@@ -14,15 +14,19 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 public class ZipUtil {
 	private ZipArchiveInputStream zis = null;
 	private ZipArchiveOutputStream zos = null;
+	private FileInputStream fis = null;
 
 	private byte[] buffer = new byte[4096];
 	
 	public ZipUtil loadZip(File zipFile) {
 		try {
-			FileInputStream fis = new FileInputStream(zipFile);
-			
+			fis = new FileInputStream(zipFile);
 			zis = new ZipArchiveInputStream(fis);
+			
 		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -71,6 +75,8 @@ public class ZipUtil {
 					while((bytesRead = fis.read(buffer)) >= 0) {
 						zos.write(buffer, 0, bytesRead);
 					}
+					
+					fis.close();
 					
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -126,6 +132,8 @@ public class ZipUtil {
 				zos.close();
 			if (zis != null)
 				zis.close();
+			if (fis != null)
+				fis.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -123,7 +123,6 @@ public class AppSyncr implements ProcessWatcherListener, GlobalEventListener {
 		
 		try {
 			tempZipFile = File.createTempFile(appName, ".zip");
-			tempZipFile.deleteOnExit();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -138,6 +137,7 @@ public class AppSyncr implements ProcessWatcherListener, GlobalEventListener {
 			}
 			
 			newZip.save();
+			newZip.close();
 
 			DropboxEntry upload = dropbox.upload(new File(tempZipFile.getAbsolutePath()),
 					config.getDropboxZipPath(), true);
@@ -145,6 +145,8 @@ public class AppSyncr implements ProcessWatcherListener, GlobalEventListener {
 			saveSyncInfo(upload);
 			
 			showTooltip(Language.getFormattedString("UploadFinished", config.getAppTitle()));
+			
+			FileUtil.delete(tempZipFile);
 		}
 		
 		config.setSyncing(false);
@@ -165,8 +167,7 @@ public class AppSyncr implements ProcessWatcherListener, GlobalEventListener {
 		
 		try {
 			tempFile = File.createTempFile(appName, ".zip");
-			tempFile.deleteOnExit();
-			
+
 			dropbox.download(config.getDropboxZipPath(), tempFile);
 			zip = new ZipUtil().loadZip(tempFile);
 
@@ -184,6 +185,7 @@ public class AppSyncr implements ProcessWatcherListener, GlobalEventListener {
 				tempDirectory.deleteOnExit();
 				
 				zip.extract(tempDirectory);
+				zip.close();
 				
 				String tempPath = tempDirectory.getAbsolutePath() + "/" + fileInfo.getDropboxPath();
 				

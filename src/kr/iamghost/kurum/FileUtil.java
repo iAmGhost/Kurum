@@ -35,6 +35,9 @@ public class FileUtil {
 					fos.write(buffer, 0, bytesRead);
 				}
 				
+				fis.close();
+				fos.close();
+				
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.DropboxAPI.Account;
@@ -83,6 +84,7 @@ public class DropboxUtil {
 			else
 				newEntry = client.putFileOverwrite(destPath, is, source.length(), null);
 			
+			is.close();
 			result.setEntry(newEntry);
 		}
 		catch (Exception e) {
@@ -104,10 +106,15 @@ public class DropboxUtil {
 			FileOutputStream os = new FileOutputStream(dest, false);
 			
 			fileInfo = client.getFile(path, rev, os, null);
+			
+			os.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (DropboxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -125,12 +132,17 @@ public class DropboxUtil {
 				   text.length(), null);
 		   
 		   entry.setEntry(newEntry);
+		   
+		   inputStream.close();
 		}
 		catch (DropboxUnlinkedException e) {
 			//
 		}
 		catch (DropboxException e) {
 			//
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		return entry;
