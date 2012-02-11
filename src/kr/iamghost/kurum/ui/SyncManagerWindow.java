@@ -118,6 +118,28 @@ public class SyncManagerWindow extends Window implements GlobalEventListener {
 			}
 		});
 		
+		Button syncThisAppButton = new Button(shell, SWT.PUSH);
+		syncThisAppButton.setText(Language.getString("SyncThisAppOnly"));
+		syncThisAppButton.setLayoutData(
+				new GridDataBuilder()
+					.fillHorizontal()
+					.spanHorizontal(2)
+					.create());
+		syncThisAppButton.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				onClickSyncThisAppButton();
+				
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
 		Button forceUploadButton = new Button(shell, SWT.PUSH);
 		forceUploadButton.setText(Language.getString("ForceUpload"));
 		forceUploadButton.setLayoutData(
@@ -213,6 +235,21 @@ public class SyncManagerWindow extends Window implements GlobalEventListener {
 		loadAppConfigList();
 	}
 	
+	protected void onClickSyncThisAppButton() {
+		int select = appConfigCombo.getSelectionIndex();
+		
+		if (select >= 0) {
+			MessageBox msgBox = new MessageBox(getShell(), SWT.YES | SWT.NO | SWT.ICON_INFORMATION);
+			msgBox.setText(Environment.KURUMTITLE);
+			msgBox.setMessage(Language.getFormattedString("ConfirmSyncSpecificApp",
+					currentAppConfig.getAppTitle()));
+			
+			if (msgBox.open() == SWT.YES) {
+				Global.setObject("SyncNow", currentAppConfig);
+			}
+		}
+	}
+
 	protected void onClickForceUploadButton() {
 		
 		int select = appConfigCombo.getSelectionIndex();
