@@ -22,7 +22,7 @@ public class Environment {
 	static {
 		envVars = new HashMap<String, EnvironmentVariable>();
 		
-		String appDataDir = SystemUtils.getUserHome().toString().replaceAll("\\\\", "/");
+		String homeDir = SystemUtils.getUserHome().toString().replaceAll("\\\\", "/");
 		if (SystemUtils.IS_OS_WINDOWS) {
 			
 			try {
@@ -49,7 +49,7 @@ public class Environment {
 			}
 		}
 		else if (SystemUtils.IS_OS_MAC_OSX) {
-			APPDATA = appDataDir +"/Library/Application Support";
+			APPDATA = homeDir + "/Library/Application Support";
 			APPDATA_LOCAL = APPDATA;
 			STEAM = APPDATA + "/Steam";
 		}
