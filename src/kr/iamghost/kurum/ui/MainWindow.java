@@ -1,6 +1,8 @@
 package kr.iamghost.kurum.ui;
 
 import java.awt.SystemTray;
+import java.io.IOException;
+import java.io.InputStream;
 
 import kr.iamghost.kurum.AppConfigVariable;
 import kr.iamghost.kurum.AppConfigVariable.VarType;
@@ -13,6 +15,7 @@ import kr.iamghost.kurum.GlobalEventListener;
 import kr.iamghost.kurum.Language;
 import kr.iamghost.kurum.Log;
 import kr.iamghost.kurum.PropertyUtil;
+import kr.iamghost.kurum.images.Images;
 
 import org.apache.commons.lang3.SystemUtils;
 import org.eclipse.swt.SWT;
@@ -22,6 +25,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -200,7 +204,16 @@ public class MainWindow extends Window implements GlobalEventListener{
 		if (tray != null)
 		{
 			trayItem = new TrayItem(tray, SWT.NONE);
-			trayItem.setImage(getShell().getImage());
+			InputStream is = Images.class.getResourceAsStream("Kurum_16px.png");
+			
+			trayItem.setImage(new Image(getDisplay(), is));
+			
+			try {
+				is.close();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			
 			final Menu menu = new Menu(getShell(), SWT.POP_UP);
 			MenuItem menuItem = new MenuItem(menu, SWT.PUSH);

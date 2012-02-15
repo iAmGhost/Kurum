@@ -54,7 +54,7 @@ public class Environment {
 			STEAM = APPDATA + "/Steam";
 		}
 		KURUM = APPDATA + "/Kurum";
-		VERSION = "1.0";
+		VERSION = "Beta #20120216";
 		KURUMTITLE = "Kurum " + VERSION;
 		
 		
@@ -82,7 +82,8 @@ public class Environment {
 		path = path.replaceAll("\\\\", "/");
 		
 		for (EnvironmentVariable ev : envVars.values()) {
-			path = path.replaceAll(ev.getName(), ev.getValue());
+			if (ev.getValue() != null)
+				path = path.replaceAll(ev.getName(), ev.getValue());
 		}
 
 		return path;

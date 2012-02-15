@@ -104,6 +104,7 @@
 		
 		<jarbundler dir="${dist.dir}"
 		            name="Kurum"
+					icon="src/kr/iamghost/kurum/images/Kurum.icns"
 		            mainclass="org.swtjar.SWTLoader" 
 		            jar="${dist.dir}/Kurum.jar"
 					jvmversion="1.6.0+"

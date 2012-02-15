@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class FileUtil {
 	public static boolean delete(File file) {
@@ -17,6 +18,20 @@ public class FileUtil {
 		
 		return file.delete();
 	}
+
+	public static void copy(InputStream fis, FileOutputStream fos) {
+		try {
+			int bytesRead = 0;
+			byte[] buffer = new byte[4096];
+			
+			while ((bytesRead = fis.read(buffer)) >= 0) {
+				fos.write(buffer, 0, bytesRead);
+			}
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	public static void copy(File source, File dest) {
 		if (source.isFile()) {
@@ -28,15 +43,11 @@ public class FileUtil {
 				FileInputStream fis = new FileInputStream(source);
 				FileOutputStream fos = new FileOutputStream(dest);
 				
-				int bytesRead = 0;
-				byte[] buffer = new byte[4096];
-				
-				while ((bytesRead = fis.read(buffer)) >= 0) {
-					fos.write(buffer, 0, bytesRead);
-				}
+				copy(fis, fos);
 				
 				fis.close();
 				fos.close();
+				
 				
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block

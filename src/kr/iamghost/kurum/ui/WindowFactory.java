@@ -1,5 +1,6 @@
 package kr.iamghost.kurum.ui;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
@@ -26,6 +27,12 @@ public class WindowFactory {
 		
 		InputStream is = Images.class.getResourceAsStream("Kurum_512px.png");
 		image = new Image(display, is);
+		try {
+			is.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public static Window create(String windowName) {
