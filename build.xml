@@ -91,13 +91,13 @@
 			<config dontWrapJar="false" headerType="gui" jarPath="dist/Kurum.jar"
 				outfile="dist/Kurum.exe" customProcName="true"
 				icon="src/kr/iamghost/kurum/images/Kurum.ico">
-				<jre minVersion="1.5.0" jdkPreference="preferJre" maxHeapSize="10"/>
+				<jre minVersion="1.5.0" jdkPreference="preferJre" maxHeapSize="10" path="jre/"/>
 				<singleInstance mutexName="Kurum"/>
 			</config>
 		</launch4j>
 		
 	</target>
-	
+
 	<target name="bundle_mac" depends="dist">
 		<taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" 
 			classpath="./lib/ant/jarbundler-2.2.0.jar" />
