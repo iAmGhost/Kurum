@@ -3,6 +3,8 @@ package kr.iamghost.kurum.ui;
 import java.awt.SystemTray;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import kr.iamghost.kurum.AppConfigVariable;
 import kr.iamghost.kurum.AppConfigVariable.VarType;
@@ -14,7 +16,12 @@ import kr.iamghost.kurum.GlobalEvent;
 import kr.iamghost.kurum.GlobalEventListener;
 import kr.iamghost.kurum.Language;
 import kr.iamghost.kurum.Log;
+import kr.iamghost.kurum.ProcessWatcher;
+import kr.iamghost.kurum.ProcessWatcherEvent;
+import kr.iamghost.kurum.ProcessWatcherListener;
 import kr.iamghost.kurum.PropertyUtil;
+import kr.iamghost.kurum.Suggestion;
+import kr.iamghost.kurum.SuggestionParser;
 import kr.iamghost.kurum.images.Images;
 
 import org.apache.commons.lang3.SystemUtils;
@@ -42,10 +49,14 @@ import org.eclipse.swt.widgets.ToolTip;
 import org.eclipse.swt.widgets.Tray;
 import org.eclipse.swt.widgets.TrayItem;
 
-public class MainWindow extends Window implements GlobalEventListener{
+public class MainWindow extends Window implements GlobalEventListener, ProcessWatcherListener{
+	final static private String INTERNAL_CONFIG_FILE = "InternalConfig.properties";
+	private final static int PROCESS_WATCH_PERIOD = 1000 * 5;
+	private ProcessWatcher processWatcher;
 	private AppSyncr appSyncr;
 	private TrayItem trayItem;
 	private Window logWindow;
+	private ArrayList<Suggestion> suggestions;
 
 	protected boolean quit;
 	
@@ -94,10 +105,30 @@ public class MainWindow extends Window implements GlobalEventListener{
 		
 		Global.addEventlistener(this);
 		
-		checkFirstLaunch();
-		
 		appSyncr = new AppSyncr();
 		appSyncr.init();
+		
+		
+		
+		PropertyUtil internalConfig = new PropertyUtil().loadLocalFile(INTERNAL_CONFIG_FILE);
+		
+		SuggestionParser sp = new SuggestionParser();
+		sp.parse(internalConfig.getString("suggestion_url"));
+		suggestions = sp.getSuggestions();
+		
+		processWatcher = new ProcessWatcher();
+		processWatcher.addEventListener(this);
+
+		Global.setObject("Suggestions", suggestions);
+		Iterator<Suggestion> it = suggestions.iterator();
+		
+		while (it.hasNext())
+		{
+			Suggestion suggestion = it.next();
+			processWatcher.addProcess(suggestion.getProcessName());
+		}
+		
+		processWatcher.start(PROCESS_WATCH_PERIOD);
 		
 		logWindow = WindowFactory.create("Log");
 	}
@@ -186,18 +217,6 @@ public class MainWindow extends Window implements GlobalEventListener{
 		});
 	}
 	
-	private void onClickSyncManagerButton() {
-		jumpToNewWindow("SyncManager");
-	}
-	
-	private void onClickLoginButton() {
-		jumpToNewWindow("DropboxLogin");
-	}
-
-	private void checkDropboxLoginAndRaiseError() {
-		if (!DropboxUtil.getDefaultDropbox().isLinked()) Global.set("DropboxLoginError", true);
-	}
-	
 	private void initTrayAndMenu() {
 		final Tray tray = getDisplay().getSystemTray();
 		
@@ -256,8 +275,16 @@ public class MainWindow extends Window implements GlobalEventListener{
 		}
 	}
 	
-	public void checkFirstLaunch() {
+	private void onClickSyncManagerButton() {
+		jumpToNewWindow("SyncManager");
+	}
+	
+	private void onClickLoginButton() {
+		jumpToNewWindow("DropboxLogin");
+	}
 
+	private void checkDropboxLoginAndRaiseError() {
+		if (!DropboxUtil.getDefaultDropbox().isLinked()) Global.set("DropboxLoginError", true);
 	}
 	
 	public void showTooltip(ToolTip tip) {
@@ -275,6 +302,8 @@ public class MainWindow extends Window implements GlobalEventListener{
 	@Override
 	public void onGlobalSet(GlobalEvent e) {
 		if (e.getEventKey().equals("DropboxLoginError") && e.getBool()) {
+			getShell().forceActive();
+			
 			MessageBox msg = new MessageBox(getShell(), SWT.ICON_INFORMATION | SWT.OK);
 			msg.setMessage(Language.getString("NeedDropboxLogin"));
 			msg.open();
@@ -296,6 +325,7 @@ public class MainWindow extends Window implements GlobalEventListener{
 			});
 		}
 		else if (e.getEventKey().equals("MessageBox")) {
+			getShell().forceActive();
 			Shell shell = (Shell)Global.getObject("LastShell");
 			if (shell == null) shell = getShell();
 			
@@ -321,6 +351,7 @@ public class MainWindow extends Window implements GlobalEventListener{
 	}
 
 	private void handleVariableNotFoundError(AppConfigVariable var) {
+		getShell().forceActive();
 		String dir = null;
 		
 		if (var.getType() == VarType.DIRECTORY) {
@@ -343,5 +374,22 @@ public class MainWindow extends Window implements GlobalEventListener{
 		}
 		
 		Global.setObject("SyncNow", Global.getObject("VariableNotFoundAppConfig"));
+	}
+
+	@Override
+	public void onProcessDisappeared(ProcessWatcherEvent e) {
+		final String processName = e.getProcessName();
+		String ignore = PropertyUtil.getDefaultProperty().getString("ignore_" + processName);
+		if(!appSyncr.isWatchingProcess(processName) && !ignore.equals("true"))
+		{
+			getDisplay().asyncExec(new Runnable() {
+				
+				@Override
+				public void run() {
+					Global.set("LastSuggestedProcess", processName);
+					jumpToNewWindow("Suggestion");
+				}
+			});
+		}
 	}
 }

@@ -14,7 +14,7 @@ public class ProcessWatcher implements ActionListener {
 	private ArrayList<String> appearedList = new ArrayList<String>();
 	private EventListenerList eventList = new EventListenerList();
 	private Timer timer;
-	
+
 	public void start(int delay) {
 		timer = new Timer();
 		timer.scheduleAtFixedRate(new TimerTask() {

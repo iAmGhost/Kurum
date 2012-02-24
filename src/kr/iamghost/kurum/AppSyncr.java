@@ -29,6 +29,18 @@ public class AppSyncr implements ProcessWatcherListener, GlobalEventListener {
 		Global.addEventlistener(this);
 	}
 	
+	public boolean isWatchingProcess(String processName)
+	{
+		for (AppConfig config : appConfigs.values())
+		{
+			if (config.getProcessName().equalsIgnoreCase(processName))
+			{
+				return true;
+			}
+		}
+		
+		return false;
+	}
 	
 	public void syncAllApps() {
 		new Thread() {

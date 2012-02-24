@@ -4,4 +4,4 @@ bin/
 dist/
 temp/
 #Secret API Keys
-src/kr/iamghost/kurum/APIKeys.properties
+src/kr/iamghost/kurum/InternalConfig.properties

@@ -237,8 +237,7 @@ public class AppConfigImportWindow extends Window {
 			
 			AppConfig tempConfig = parser.getAppConfig();
 			
-			if (tempConfig != null && tempConfig.getAppName() != null
-					&& tempConfig.getAppTitle() != null) {
+			if (tempConfig != null && tempConfig.isValid()) {
 				File targetFile = new File(Environment.KURUM + "/AppConfigs/" + configFile.getName());
 				FileUtil.copy(configFile, targetFile);
 				

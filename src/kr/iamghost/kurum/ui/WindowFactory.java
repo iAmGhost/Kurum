@@ -22,6 +22,7 @@ public class WindowFactory {
 		windowList.put("Log", "LogWindow");
 		windowList.put("SyncManager", "SyncManagerWindow");
 		windowList.put("AppConfigImport", "AppConfigImportWindow");
+		windowList.put("Suggestion", "SuggestionWindow");
 		
 		display = Display.getCurrent();
 		

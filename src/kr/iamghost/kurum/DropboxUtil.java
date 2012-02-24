@@ -21,7 +21,7 @@ import com.dropbox.client2.session.WebAuthSession;
 import com.dropbox.client2.session.WebAuthSession.WebAuthInfo;
 
 public class DropboxUtil {
-	final static private String APP_KEY_FILE = "APIKeys.properties";
+	final static private String INTERNAL_CONFIG_FILE = "InternalConfig.properties";
 	final static private AccessType ACCESS_TYPE = AccessType.APP_FOLDER;
 	private DropboxAPI<WebAuthSession> client;
 	private WebAuthSession session;
@@ -42,7 +42,7 @@ public class DropboxUtil {
 	}
 	
 	public void refreshClient() {
-		PropertyUtil keyFile = new PropertyUtil().loadLocalFile(APP_KEY_FILE);
+		PropertyUtil keyFile = new PropertyUtil().loadLocalFile(INTERNAL_CONFIG_FILE);
 		String api_key = keyFile.getString("api_key");
 		String api_secret =  keyFile.getString("api_secret");
 		

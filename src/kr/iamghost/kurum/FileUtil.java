@@ -1,5 +1,6 @@
 package kr.iamghost.kurum;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -21,12 +22,16 @@ public class FileUtil {
 
 	public static void copy(InputStream fis, FileOutputStream fos) {
 		try {
+			BufferedOutputStream bos = new BufferedOutputStream(fos, 4096);
+			
 			int bytesRead = 0;
 			byte[] buffer = new byte[4096];
 			
 			while ((bytesRead = fis.read(buffer)) >= 0) {
-				fos.write(buffer, 0, bytesRead);
+				bos.write(buffer, 0, bytesRead);
 			}
+			
+			bos.close();
 		}
 		catch (IOException e) {
 			e.printStackTrace();

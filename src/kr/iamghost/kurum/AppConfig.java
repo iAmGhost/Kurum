@@ -120,6 +120,12 @@ public class AppConfig {
 	public boolean isSyncing() {
 		return isSyncing;
 	}
+	
+	public boolean isValid() {
+		if (getAppName() != null && getAppTitle() != null)
+			return true;
+		return false;
+	}
 
 	public void setSyncing(boolean isSyncing) {
 		this.isSyncing = isSyncing;
