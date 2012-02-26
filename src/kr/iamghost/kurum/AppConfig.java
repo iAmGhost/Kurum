@@ -15,6 +15,7 @@ public class AppConfig {
 	private ArrayList<AppConfigFileEntry> files = new ArrayList<AppConfigFileEntry>();
 	private boolean usesLuaScript;
 	private String luaScriptContent;
+	private String supportedVersion;
 	
 	public String getAppName() {
 		return appName;
@@ -147,5 +148,13 @@ public class AppConfig {
 
 	public void setLuaScriptContent(String luaScriptContent) {
 		this.luaScriptContent = luaScriptContent;
+	}
+
+	public String getSupportedVersion() {
+		return supportedVersion;
+	}
+
+	public void setSupportedVersion(String supportedVersion) {
+		this.supportedVersion = supportedVersion;
 	}
 }

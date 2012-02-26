@@ -77,7 +77,7 @@ public class MainWindow extends Window implements GlobalEventListener, ProcessWa
 	public void init() {
 		Shell shell = getShell();
 		shell.setText(Environment.KURUMTITLE);
-		shell.setSize(250, 250);
+		shell.setSize(300, 250);
 		centre();
 		
 		initForm();

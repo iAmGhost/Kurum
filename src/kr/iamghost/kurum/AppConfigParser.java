@@ -58,6 +58,7 @@ public class AppConfigParser extends DefaultHandler {
 			tempConfig = new AppConfig();
 			tempConfig.setOriginalFile(new File(filePath));
 			tempConfig.setAppName(attributes.getValue("internalName"));
+			tempConfig.setSupportedVersion(attributes.getValue("kurumVersion"));
 		}
 		else if(qName.equalsIgnoreCase("title")) {
 			status = Status.TITLE;

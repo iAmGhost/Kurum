@@ -54,7 +54,7 @@ public class Environment {
 			STEAM = APPDATA + "/Steam";
 		}
 		KURUM = APPDATA + "/Kurum";
-		VERSION = "Beta #20120226";
+		VERSION = "#20120227";
 		KURUMTITLE = "Kurum " + VERSION;
 		
 		

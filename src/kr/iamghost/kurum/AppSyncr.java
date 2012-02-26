@@ -172,6 +172,18 @@ public class AppSyncr implements ProcessWatcherListener, GlobalEventListener {
 	}
 
 	public void syncApp(AppConfig config, boolean force) {
+		String supportedVersion = config.getSupportedVersion();
+		
+		if (supportedVersion != null) {
+			supportedVersion = supportedVersion.substring(1, supportedVersion.length());
+			int version = Integer.valueOf(supportedVersion);
+			int kurumVersion = Integer.valueOf(Environment.VERSION.substring(1, Environment.VERSION.length()));
+			
+			if (version > kurumVersion) {
+				Log.write(config.getAppTitle() + " AppConfig requires newer Kurum version: #" + version);
+				return ;
+			}
+		}
 		
 		if (config != null && !config.isSyncing() && config.checkAllVars()) {
 			String appName = config.getAppName();
