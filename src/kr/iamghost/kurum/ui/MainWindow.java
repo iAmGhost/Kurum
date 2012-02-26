@@ -307,7 +307,7 @@ public class MainWindow extends Window implements GlobalEventListener, ProcessWa
 			MessageBox msg = new MessageBox(getShell(), SWT.ICON_INFORMATION | SWT.OK);
 			msg.setMessage(Language.getString("NeedDropboxLogin"));
 			msg.open();
-			new DropboxLoginWindow(getDisplay()).open();
+			WindowFactory.create("DropboxLogin").open();
 		}
 		else if (e.getEventKey().equals("RefreshAppConfigs") && e.getBool()) {
 			appSyncr.reload();
