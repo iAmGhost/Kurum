@@ -226,6 +226,7 @@ public class MainWindow extends Window implements GlobalEventListener, ProcessWa
 			InputStream is = Images.class.getResourceAsStream("Kurum_16px.png");
 			
 			trayItem.setImage(new Image(getDisplay(), is));
+			trayItem.setVisible(true);
 			
 			try {
 				is.close();

@@ -52,14 +52,14 @@
 	<target name="dist" depends="compile">
 		<swtjar jarfile="${temp.dir}/kurum_temp.jar"
 			targetmainclass="kr.iamghost.kurum.Main"
-			swtversion="3.7.1">
+			swtversion="3.7.2">
 			<!-- Application Classes -->
 			<fileset dir="./bin" includes="**/*.class" />
 			<fileset dir="./bin" includes="**/*.properties" />
 			<fileset dir="./bin" includes="**/*.png" />
 			<fileset dir="./bin" includes="**/*.ico" />
 			<!-- SWT Jars -->
-			<fileset dir="${lib.dir}/swt" includes="swt-*-3.7.1.jar" />
+			<fileset dir="${lib.dir}/swt" includes="swt-*-3.7.2.jar" />
 			<zipgroupfileset dir="${lib.dir}" includes="*.jar" />
 		</swtjar>
 		

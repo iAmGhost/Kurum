@@ -53,6 +53,12 @@ public class Environment {
 			APPDATA_LOCAL = APPDATA;
 			STEAM = APPDATA + "/Steam";
 		}
+		else if (SystemUtils.IS_OS_LINUX) {
+			APPDATA = homeDir + "/.config";
+			APPDATA_LOCAL = APPDATA;
+			STEAM = APPDATA + "/Steam";
+		}
+		
 		KURUM = APPDATA + "/Kurum";
 		VERSION = "#20120227";
 		KURUMTITLE = "Kurum " + VERSION;
