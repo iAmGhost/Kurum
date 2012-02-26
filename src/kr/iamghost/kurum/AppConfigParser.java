@@ -13,7 +13,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class AppConfigParser extends DefaultHandler {
 	public enum Status {
-		NONE, APPCONFIG, TITLE, AUTHOR, ENTRIES, ENTRY, VAR, FILE, DIR, FINALIZE;
+		NONE, APPCONFIG, TITLE, AUTHOR, ENTRIES, ENTRY, VAR, LUA, FILE, DIR, FINALIZE;
 	}
 	
 	private Status status;
@@ -24,6 +24,7 @@ public class AppConfigParser extends DefaultHandler {
 	private String platformString;
 	private String tempString;
 	private String filePath;
+	private StringBuffer stringBuffer;
 	private boolean found = false;
 	
 	public AppConfigParser() {
@@ -50,6 +51,7 @@ public class AppConfigParser extends DefaultHandler {
 	public void startElement(String uri, String localName, String qName,
 			Attributes attributes)
 			throws SAXException {
+		stringBuffer = new StringBuffer();
 		
 		if (qName.equalsIgnoreCase("AppConfig")) {
 			status = Status.APPCONFIG;
@@ -104,6 +106,11 @@ public class AppConfigParser extends DefaultHandler {
 			
 			status = Status.DIR;
 		}
+		else if(qName.equalsIgnoreCase("lua")) {
+			tempConfig.setUsesLuaScript(true);
+			
+			status = Status.LUA;
+		}
 		else
 		{
 			status = Status.NONE;
@@ -112,7 +119,8 @@ public class AppConfigParser extends DefaultHandler {
 
 	public void characters(char ch[], int start, int length) throws SAXException {
 		tempString = new String(ch, start, length);
-
+		
+		
 		switch (status) {
 		
 		case TITLE:
@@ -129,11 +137,16 @@ public class AppConfigParser extends DefaultHandler {
 			tempConfig.setAuthor(tempString);
 			status = Status.NONE;
 			break;
-			
+
 		case FILE:
 		case DIR:
 			tempFileEntry.setOriginalPath(Environment.parsePath(tempString));
 			status = Status.NONE;
+			break;
+			
+		case LUA:
+			if (stringBuffer != null)
+				stringBuffer.append(tempString);
 			break;
 		}
 	}
@@ -148,6 +161,12 @@ public class AppConfigParser extends DefaultHandler {
 		else if(qName.equalsIgnoreCase("AppConfig")) {
 			status = Status.FINALIZE;
 		}
+		else if(qName.equalsIgnoreCase("Lua")) {
+			tempConfig.setLuaScriptContent(stringBuffer.toString());
+			status = Status.NONE;
+		}
+		
+		stringBuffer = null;
 	}
 	
 	public void parse(String filePath) {

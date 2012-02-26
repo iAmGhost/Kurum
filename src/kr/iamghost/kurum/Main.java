@@ -10,7 +10,6 @@ public class Main {
 
 	public static void main (String [] args) {
 	    Display display = new Display();
-
 	    Window mainWindow = WindowFactory.create("Main");
 	    
 	    while (!mainWindow.isDisposed()) {

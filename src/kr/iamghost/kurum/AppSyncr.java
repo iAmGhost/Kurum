@@ -1,12 +1,12 @@
 package kr.iamghost.kurum;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import kr.iamghost.kurum.LuaEngine.LuaMode;
 
 import org.eclipse.swt.widgets.Display;
 
@@ -124,105 +124,37 @@ public class AppSyncr implements ProcessWatcherListener, GlobalEventListener {
 	
 	public void uploadToDropbox(AppConfig config) {
 		config.setSyncing(true);
-		
 		showTooltip(Language.getFormattedString("StartSyncing", config.getAppTitle()));
 		
-		Iterator<AppConfigFileEntry> it = config.getFilesIterator();
-		
-		String appName = config.getAppName();
-	
-		File tempZipFile = null;
-		
-		try {
-			tempZipFile = File.createTempFile(appName, ".zip");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (!config.isUsesLuaScript()) {
+			AppSyncrEngine engine = new AppSyncrEngine(config);
+			engine.doDefaultUpload();
 		}
-		
-		if (tempZipFile != null) {
-			ZipUtil newZip = new ZipUtil().createZip(tempZipFile);
-			
-			while (it.hasNext()) {
-				AppConfigFileEntry fileInfo = it.next();
-				newZip.add(fileInfo);
-			}
-			
-			newZip.save();
-			newZip.close();
-
-			DropboxEntry upload = dropbox.upload(new File(tempZipFile.getAbsolutePath()),
-					config.getDropboxZipPath(), kurumConfig.getString(appName + ".zip_rev"), true);
-			
-			saveSyncInfo(upload);
-			
-			showTooltip(Language.getFormattedString("UploadFinished", config.getAppTitle()));
-			
-			FileUtil.delete(tempZipFile);
+		else {
+			LuaEngine.getDefaultLuaEngine().run(config, LuaMode.UPLOAD);
 		}
-		
+			
+		showTooltip(Language.getFormattedString("UploadFinished", config.getAppTitle()));
 		config.setSyncing(false);
 	}
-	
+
 	public void downloadToLocal(AppConfig config) {
 		config.setSyncing(true);
-		
 		showTooltip(Language.getFormattedString("StartSyncing", config.getAppTitle()));
 		
-		Iterator<AppConfigFileEntry> it = config.getFilesIterator();
-		
-		String appName = config.getAppName();
-
-		File tempFile = null;
-		File tempDirectory = null;
-		ZipUtil zip = null;
-		
-		try {
-			tempFile = File.createTempFile(appName, ".zip");
-
-			dropbox.download(config.getDropboxZipPath(), tempFile);
-			zip = new ZipUtil().loadZip(tempFile);
-
+		if (!config.isUsesLuaScript()) {
+			AppSyncrEngine engine = new AppSyncrEngine(config);
+			engine.doDefaultDownload();
 		}
-		catch (Exception e) {
-			e.printStackTrace();
+		else {
+			LuaEngine.getDefaultLuaEngine().run(config, LuaMode.DOWNLOAD);
 		}
-		
-		while (it.hasNext()) {
-			AppConfigFileEntry fileInfo = it.next();
 			
-			try {
-				tempDirectory = File.createTempFile("Kurum", "");
-				tempDirectory.delete();
-				tempDirectory.deleteOnExit();
-				
-				zip.extract(tempDirectory);
-				zip.close();
-				
-				String tempPath = tempDirectory.getAbsolutePath() + "/" + fileInfo.getDropboxPath();
-				
-				if (fileInfo.isNeedCleanup())
-					FileUtil.delete(fileInfo.getOriginalFile());
-				
-				FileUtil.copy(new File(tempPath), fileInfo.getOriginalFile());
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-		}
-		
-		FileUtil.delete(tempFile);
-		FileUtil.delete(tempDirectory);
-		
-		DropboxEntry meta = dropbox.getMetadata(config.getDropboxZipPath());
-		saveSyncInfo(meta);
 		
 		showTooltip(Language.getFormattedString("DownloadFinished", config.getAppTitle()));
-		
 		config.setSyncing(false);
 	}
-	
+
 	public void showTooltip(final String text) {
 		Display.getDefault().asyncExec(new Runnable() {
 			
@@ -233,6 +165,7 @@ public class AppSyncr implements ProcessWatcherListener, GlobalEventListener {
 		});
 		
 	}
+	
 	public void saveSyncInfo(DropboxEntry entry) {
 		kurumConfig.setString(entry.fileName + "_date", entry.modifydate.toString());
 		kurumConfig.setString(entry.fileName + "_rev", entry.rev);

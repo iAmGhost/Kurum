@@ -13,6 +13,8 @@ public class AppConfig {
 	private File originalFile;
 	private ArrayList<AppConfigVariable> vars = new ArrayList<AppConfigVariable>();
 	private ArrayList<AppConfigFileEntry> files = new ArrayList<AppConfigFileEntry>();
+	private boolean usesLuaScript;
+	private String luaScriptContent;
 	
 	public String getAppName() {
 		return appName;
@@ -129,5 +131,21 @@ public class AppConfig {
 
 	public void setSyncing(boolean isSyncing) {
 		this.isSyncing = isSyncing;
+	}
+
+	public boolean isUsesLuaScript() {
+		return usesLuaScript;
+	}
+
+	public void setUsesLuaScript(boolean usesLuaScript) {
+		this.usesLuaScript = usesLuaScript;
+	}
+
+	public String getLuaScriptContent() {
+		return luaScriptContent;
+	}
+
+	public void setLuaScriptContent(String luaScriptContent) {
+		this.luaScriptContent = luaScriptContent;
 	}
 }

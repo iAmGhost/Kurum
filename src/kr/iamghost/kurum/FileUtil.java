@@ -9,6 +9,19 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class FileUtil {
+	
+	public static long getFileSize(String filePath) {
+		return getFileSize(new File(filePath));
+	}
+	
+	public static long getFileSize(File file) {
+		return file.length();
+	}
+	
+	public static boolean delete(String filePath) {
+		return delete(new File(filePath));
+	}
+	
 	public static boolean delete(File file) {
 		if (file.isDirectory()) {
 			File[] files = file.listFiles();
@@ -18,6 +31,10 @@ public class FileUtil {
 		}
 		
 		return file.delete();
+	}
+	
+	public static void copy(String targetPath, String destPath) {
+		copy(new File(targetPath), new File(destPath));
 	}
 
 	public static void copy(InputStream fis, FileOutputStream fos) {
