@@ -23,7 +23,6 @@ public class LuaEngine {
 	public LuaEngine() {
 		manager = new ScriptEngineManager();
 		engine = manager.getEngineByExtension(".lua");
-		
 	}
 
 	public void run(AppConfig appConfig, LuaMode mode) {

@@ -54,7 +54,7 @@ public class Environment {
 			STEAM = APPDATA + "/Steam";
 		}
 		else if (SystemUtils.IS_OS_LINUX) {
-			APPDATA = homeDir + "/.config";
+			APPDATA = homeDir + "/.local/share";
 			APPDATA_LOCAL = APPDATA;
 			STEAM = APPDATA + "/Steam";
 		}

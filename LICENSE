@@ -16,6 +16,7 @@ Here is list of used libraries which is not mine:
 * JarBundler - http://informagen.com/JarBundler
 * JNA - https://github.com/twall/jna
 * launch4j - http://launch4j.sourceforge.net
+* Luaj - http://luaj.sourceforge.net/
 
 And part of Dropbox API:
 

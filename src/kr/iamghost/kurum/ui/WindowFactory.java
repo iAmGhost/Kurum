@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 import kr.iamghost.kurum.images.Images;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 
@@ -26,7 +27,15 @@ public class WindowFactory {
 		
 		display = Display.getCurrent();
 		
-		InputStream is = Images.class.getResourceAsStream("Kurum_512px.png");
+		InputStream is = null;
+		
+		if (SystemUtils.IS_OS_LINUX) {
+			is = Images.class.getResourceAsStream("Kurum_64px.png");
+		}
+		else {
+			is = Images.class.getResourceAsStream("Kurum_512px.png");
+		}
+		
 		image = new Image(display, is);
 		try {
 			is.close();
