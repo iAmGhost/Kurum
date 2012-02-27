@@ -60,7 +60,7 @@ public class Environment {
 		}
 		
 		KURUM = APPDATA + "/Kurum";
-		VERSION = "#20120227";
+		VERSION = "#2012022701";
 		KURUMTITLE = "Kurum " + VERSION;
 		
 		

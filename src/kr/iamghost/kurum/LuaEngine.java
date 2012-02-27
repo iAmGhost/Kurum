@@ -4,8 +4,9 @@ import javax.script.Bindings;
 import javax.script.Compilable;
 import javax.script.CompiledScript;
 import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+
+import org.luaj.vm2.script.LuaScriptEngineFactory;
 
 public class LuaEngine {
 	public enum LuaMode {
@@ -13,7 +14,6 @@ public class LuaEngine {
 	}
 	
 	private static LuaEngine defaultLuaEngine;
-	private ScriptEngineManager manager;
 	private ScriptEngine engine;
 	
 	static {
@@ -21,8 +21,7 @@ public class LuaEngine {
 	}
 	
 	public LuaEngine() {
-		manager = new ScriptEngineManager();
-		engine = manager.getEngineByExtension(".lua");
+		engine = new LuaScriptEngineFactory().getScriptEngine();
 	}
 
 	public void run(AppConfig appConfig, LuaMode mode) {
