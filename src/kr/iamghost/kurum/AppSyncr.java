@@ -1,7 +1,6 @@
 package kr.iamghost.kurum;
 
 import java.io.File;
-import java.sql.Time;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Timer;
