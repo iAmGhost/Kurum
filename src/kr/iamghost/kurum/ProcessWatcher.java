@@ -36,10 +36,6 @@ public class ProcessWatcher implements ActionListener {
 		timer.cancel();
 	}
 	
-	public boolean foundAtLeastOneProcess() {
-		return !appearedList.isEmpty();
-	}
-	
 	public void clear() {
 		watchList.clear();
 		appearedList.clear();
