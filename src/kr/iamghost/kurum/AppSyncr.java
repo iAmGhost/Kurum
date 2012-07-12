@@ -62,9 +62,7 @@ public class AppSyncr implements ProcessWatcherListener, GlobalEventListener {
 		long diff = currentTime - lastSyncTime;
 		
 		if (diff >= AUTOMATIC_SYNC_PERIOD) {
-			if (processWatcher.foundAtLeastOneProcess()) {
-				syncAllApps();
-			}
+			syncAllApps();
 		}
 		
 		lastSyncTime = currentTime;

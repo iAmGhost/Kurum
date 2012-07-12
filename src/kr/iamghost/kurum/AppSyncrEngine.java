@@ -9,7 +9,7 @@ import org.apache.commons.lang3.SystemUtils;
 public class AppSyncrEngine {
 	private AppConfig appConfig;
 	private ZipUtil zipFile;
-	private PropertyUtil kurumConfig = PropertyUtil.getDefaultProperty();;
+	private PropertyUtil kurumConfig = PropertyUtil.getDefaultProperty();
 	private String tempDirectoryPath;
 	
 	public AppSyncrEngine(AppConfig appConfig) {
