@@ -311,9 +311,11 @@ public class MainWindow extends Window implements GlobalEventListener, ProcessWa
 			msg.setMessage(Language.getString("NeedDropboxLogin"));
 			msg.open();
 			WindowFactory.create("DropboxLogin").open();
+			
 		} else if (e.getEventKey().equals("RefreshAppConfigs") && e.getBool()) {
 			appSyncr.reload();
 			Log.write("Reload AppConfigs");
+			
 		} else if(e.getEventKey().equals("VariableNotFoundError")) {
 			final AppConfigVariable var = (AppConfigVariable)e.getObject();
 			getDisplay().asyncExec(new Runnable() {
@@ -327,23 +329,33 @@ public class MainWindow extends Window implements GlobalEventListener, ProcessWa
 		} else if (e.getEventKey().equals("MessageBox")) {
 			getShell().forceActive();
 			Shell shell = (Shell)Global.getObject("LastShell");
-			if (shell == null) shell = getShell();
+			
+			if (shell == null) {
+				shell = getShell();
+			}
 			
 			MessageBox msg = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
+			
 			msg.setText(Environment.KURUMTITLE);
 			msg.setMessage(e.getString());
 			msg.open();
+			
 		} else if (e.getEventKey().equals("ShowToolTip")) {
 			ToolTip tip = new ToolTip(getShell(), SWT.BALLOON | SWT.ICON_INFORMATION);
+			
 			tip.setMessage(e.getString());
 			tip.setText(Environment.KURUMTITLE);
 			showTooltip(tip);
+			
 		} else if (e.getEventKey().equals("OnDropboxLoggedIn")) {
-			if (appSyncr != null)
+			if (appSyncr != null) {
 				appSyncr.syncAllApps();
+			}
+			
 		} else if(e.getEventKey().equals("LastWindowClosed")) {
 			Global.set("ShowToolTip", Language.getString("TrayNotice"));
 			setJumped(false);
+			
 		}
 	}
 
@@ -353,10 +365,13 @@ public class MainWindow extends Window implements GlobalEventListener, ProcessWa
 		
 		if (var.getType() == VarType.DIRECTORY) {
 			DirectoryDialog dlg = new DirectoryDialog(getShell());
+			
 			dlg.setMessage(var.getMessage());
 			dir = dlg.open();
+			
 		} else {
 			FileDialog dlg = new FileDialog(getShell(), SWT.OPEN);
+			
 			dlg.setFilterExtensions(var.getFilters());
 			dlg.setText(var.getMessage());
 			dir = dlg.open();
@@ -364,9 +379,11 @@ public class MainWindow extends Window implements GlobalEventListener, ProcessWa
 		
 		if (dir != null) {
 			PropertyUtil kurumConfig = PropertyUtil.getDefaultProperty();
+			
 			String parsedDir = Environment.parsePath(dir);
 			Environment.addVariable(var.getName(), parsedDir);
 			kurumConfig.setString("var_" + var.getName(), parsedDir);
+			
 		}
 		
 		Global.setObject("SyncNow", Global.getObject("VariableNotFoundAppConfig"));

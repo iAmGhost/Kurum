@@ -123,7 +123,7 @@ public class AppSyncr implements ProcessWatcherListener, GlobalEventListener {
 	
 	@Override
 	public void onProcessDisappeared(ProcessWatcherEvent e) {
-		Log.write(e.getProcessName());
+		Log.write("Found process: " + e.getProcessName());
 		syncApp(appConfigs.get(e.getProcessName()), true);
 	}
 	

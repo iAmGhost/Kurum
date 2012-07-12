@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.Locale;
 
 public class Util {
-
+	
 	public static Date stringToDate(String dateString) {
 		DateFormat sdFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss ZZZZZ yyyy", Locale.ENGLISH);
 		dateString = dateString.replaceAll("\\p{Cntrl}", "");

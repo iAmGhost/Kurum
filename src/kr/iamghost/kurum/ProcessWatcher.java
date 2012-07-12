@@ -3,6 +3,7 @@ package kr.iamghost.kurum;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -14,8 +15,11 @@ public class ProcessWatcher implements ActionListener {
 	private ArrayList<String> appearedList = new ArrayList<String>();
 	private EventListenerList eventList = new EventListenerList();
 	private Timer timer = new Timer();
+	private int delay;
+	private long lastProcessWatchTime;
 
 	public void start(int delay) {
+		this.delay = delay;
 		timer.scheduleAtFixedRate(new TimerTask() {
 			
 			@Override
@@ -24,6 +28,8 @@ public class ProcessWatcher implements ActionListener {
 				
 			}
 		}, 0, delay);
+		
+		lastProcessWatchTime = new Date().getTime() - delay;
 	}
 	
 	public void stop() {
@@ -40,25 +46,32 @@ public class ProcessWatcher implements ActionListener {
 	}
 	
 	public void checkProcesses() {
-		ProcessUtil.refresh();
+		long currentTime = new Date().getTime();
+		long diff = currentTime - lastProcessWatchTime;
 		
-		for (Iterator<String> it = watchList.iterator(); it.hasNext();) {
-			String processName = it.next();
-			if (ProcessUtil.isProcessExists(processName) && !appearedList.contains(processName)) {
-				appearedList.add(processName);
-			}
-		}
-		
-		for (Iterator<String> it = appearedList.iterator(); it.hasNext();) {
-			String processName = it.next();
+		if (diff >= delay) {
+			ProcessUtil.refresh();
 			
-			if (!ProcessUtil.isProcessExists(processName)) {
-				it.remove();
-				ProcessWatcherEvent e = new ProcessWatcherEvent(this);
-				e.setProcessName(processName);
-				fireOnProcessDisappeared(e);
+			for (Iterator<String> it = watchList.iterator(); it.hasNext();) {
+				String processName = it.next();
+				if (ProcessUtil.isProcessExists(processName) && !appearedList.contains(processName)) {
+					appearedList.add(processName);
+				}
+			}
+			
+			for (Iterator<String> it = appearedList.iterator(); it.hasNext();) {
+				String processName = it.next();
+				
+				if (!ProcessUtil.isProcessExists(processName)) {
+					it.remove();
+					ProcessWatcherEvent e = new ProcessWatcherEvent(this);
+					e.setProcessName(processName);
+					fireOnProcessDisappeared(e);
+				}
 			}
 		}
+		
+		lastProcessWatchTime = currentTime;
 	}
 	
 	public void addProcess(String processName) {
