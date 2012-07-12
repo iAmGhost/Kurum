@@ -1,6 +1,7 @@
 package kr.iamghost.kurum;
 
 import java.io.File;
+import java.sql.Time;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Timer;
@@ -18,6 +19,7 @@ public class AppSyncr implements ProcessWatcherListener, GlobalEventListener {
 	private ProcessWatcher processWatcher;
 	private DropboxUtil dropbox;
 	private Timer autoSyncTimer;
+	private long lastSyncTime;
 	
 	public AppSyncr() {
 		dropbox = DropboxUtil.getDefaultDropbox();
@@ -25,7 +27,7 @@ public class AppSyncr implements ProcessWatcherListener, GlobalEventListener {
 		
 		processWatcher = new ProcessWatcher();
 		processWatcher.addEventListener(this);
-		
+		lastSyncTime = new Date().getTime() - AUTOMATIC_SYNC_PERIOD;
 		Global.addEventlistener(this);
 	}
 	
@@ -60,8 +62,17 @@ public class AppSyncr implements ProcessWatcherListener, GlobalEventListener {
 	}
 	
 	public void timedSync() {
-		if (!processWatcher.foundAtLeastOneProcess())
-			syncAllApps();
+		long currentTime = new Date().getTime();
+		
+		long diff = currentTime - lastSyncTime;
+		
+		if (diff >= AUTOMATIC_SYNC_PERIOD) {
+			if (processWatcher.foundAtLeastOneProcess()) {
+				syncAllApps();
+			}
+		}
+		
+		lastSyncTime = currentTime;
 	}
 	
 	public void init() {
