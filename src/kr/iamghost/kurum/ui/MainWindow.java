@@ -107,26 +107,29 @@ public class MainWindow extends Window implements GlobalEventListener, ProcessWa
 		
 		appSyncr = new AppSyncr();
 		appSyncr.init();
-		
-		
-		
-		PropertyUtil internalConfig = new PropertyUtil().loadLocalFile(INTERNAL_CONFIG_FILE);
-		
-		SuggestionParser sp = new SuggestionParser();
-		sp.parse(internalConfig.getString("suggestion_url"));
-		suggestions = sp.getSuggestions();
-		
-		processWatcher = new ProcessWatcher();
-		processWatcher.addEventListener(this);
 
-		Global.setObject("Suggestions", suggestions);
-		Iterator<Suggestion> it = suggestions.iterator();
+		new Thread() {
+			public void start(MainWindow window) {
+				PropertyUtil internalConfig = new PropertyUtil().loadLocalFile(INTERNAL_CONFIG_FILE);
+				
+				SuggestionParser sp = new SuggestionParser();
+				sp.parse(internalConfig.getString("suggestion_url"));
+				suggestions = sp.getSuggestions();
+				
+				processWatcher = new ProcessWatcher();
+				processWatcher.addEventListener(window);
+
+				Global.setObject("Suggestions", suggestions);
+				Iterator<Suggestion> it = suggestions.iterator();
+				
+				while (it.hasNext())
+				{
+					Suggestion suggestion = it.next();
+					processWatcher.addProcess(suggestion.getProcessName());
+				}
+			}
+		}.start(this);
 		
-		while (it.hasNext())
-		{
-			Suggestion suggestion = it.next();
-			processWatcher.addProcess(suggestion.getProcessName());
-		}
 		
 		processWatcher.start(PROCESS_WATCH_PERIOD);
 		
