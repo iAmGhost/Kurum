@@ -50,6 +50,7 @@ public class WindowFactory {
 			String windowClassName = packageName + "." + windowList.get(windowName);
 			Constructor<?> windowClass = Class.forName(windowClassName).getConstructor(Display.class);
 			Window instance = (Window) windowClass.newInstance(display);
+			
 			instance.setWindowName(windowName);
 			instance.getShell().setImage(image);
 			instance.init();

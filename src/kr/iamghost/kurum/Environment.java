@@ -11,7 +11,7 @@ import com.sun.jna.platform.win32.Win32Exception;
 import com.sun.jna.platform.win32.WinReg;
 
 public class Environment {
-	public static HashMap<String, EnvironmentVariable> envVars;
+	public static HashMap<String, EnvironmentVariable> envVars = new HashMap<String, EnvironmentVariable>();
 	public static String APPDATA;
 	public static String APPDATA_LOCAL;
 	public static String VERSION;
@@ -20,8 +20,6 @@ public class Environment {
 	public static String STEAM;
 	
 	static {
-		envVars = new HashMap<String, EnvironmentVariable>();
-		
 		String homeDir = SystemUtils.getUserHome().toString().replaceAll("\\\\", "/");
 		if (SystemUtils.IS_OS_WINDOWS) {
 			

@@ -18,7 +18,6 @@ public class SuggestionParser extends DefaultHandler {
 	}
 	
 	private ArrayList<Suggestion> suggestions = new ArrayList<Suggestion>();
-	
 	private Status status;
 	private SAXParser parser;
 	private Suggestion tempSuggestion;
@@ -40,20 +39,27 @@ public class SuggestionParser extends DefaultHandler {
 		if (qName.equalsIgnoreCase("suggestion")) {
 			status = Status.SUGGESTION;
 			currentProcess = attributes.getValue("processName");
+			
 		} else if (qName.equalsIgnoreCase("entry")) {
 			status = Status.ENTRY;
 			tempSuggestion = new Suggestion();
 			tempSuggestion.setProcessName(currentProcess);
+			
 		} else if (qName.equalsIgnoreCase("title")) {
 			status = Status.TITLE;
+			
 		} else if (qName.equalsIgnoreCase("internalName")) {
 			status = Status.INTERNALNAME;
+			
 		} else if (qName.equalsIgnoreCase("description")) {
 			status = Status.DESCRIPTION;
+			
 		} else if (qName.equalsIgnoreCase("url")) {
 			status = Status.URL;
+			
 		} else {
 			status = Status.NONE;
+			
 		}
 	}
 
@@ -87,6 +93,7 @@ public class SuggestionParser extends DefaultHandler {
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		if (qName.equalsIgnoreCase("suggestion")) {
 			suggestions.add(tempSuggestion);
+			
 		}
 	}
 	
@@ -94,9 +101,11 @@ public class SuggestionParser extends DefaultHandler {
 		try {
 			URL xmlURL = new URL(url);
 			parser.parse(new InputSource(xmlURL.openStream()), this);
+			
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

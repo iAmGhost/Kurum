@@ -53,8 +53,9 @@ public class Window {
 			
 			@Override
 			public void shellClosed(ShellEvent e) {
-				if (!isJumped())
+				if (!isJumped()) {
 					Global.set("LastWindowClosed", true);
+				}
 			}
 			
 			@Override
@@ -95,9 +96,8 @@ public class Window {
 		
 		newWindow.setLastWindowName(this.windowName);
 		newWindow.open();
-		close();
-		
 		isJumped = true;
+		close();
 	}
 	
 	public void hide() {

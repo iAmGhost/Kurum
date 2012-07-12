@@ -90,8 +90,9 @@ public class MainWindow extends Window implements GlobalEventListener, ProcessWa
 			public void shellClosed(ShellEvent e) {
 				if (!quit) {
 					getShell().setVisible(false);
-					if (!isJumped())
+					if (!isJumped()) {
 						Global.set("LastWindowClosed", true);
+					}
 				}
 				e.doit = quit;
 			}

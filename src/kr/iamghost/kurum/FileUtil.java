@@ -78,8 +78,7 @@ public class FileUtil {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
-		else {
+		} else {
 			File[] files = source.listFiles();
 			for (File innerFile : files) {
 				copy(innerFile, new File(dest.getAbsolutePath()

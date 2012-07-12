@@ -13,16 +13,12 @@ public class LuaEngine {
 		UPLOAD, DOWNLOAD;
 	}
 	private static LuaEngine defaultLuaEngine;
-	private ScriptEngine engine;
+	private ScriptEngine engine = new LuaScriptEngineFactory().getScriptEngine();
 	
 	static {
 		setDefaultLuaEngine(new LuaEngine());
 	}
 	
-	public LuaEngine() {
-		engine = new LuaScriptEngineFactory().getScriptEngine();
-	}
-
 	public void run(AppConfig appConfig, LuaMode mode) {
 		try {
 			String script = appConfig.getLuaScriptContent();

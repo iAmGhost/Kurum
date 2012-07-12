@@ -13,23 +13,19 @@ import org.eclipse.swt.widgets.Display;
 public class AppSyncr implements ProcessWatcherListener, GlobalEventListener {
 	private final static int PROCESS_WATCH_PERIOD = 1000 * 5;
 	private final static int AUTOMATIC_SYNC_PERIOD = 1000 * 60 * 5;
-	private HashMap<String, AppConfig> appConfigs;
-	private PropertyUtil kurumConfig;
-	private ProcessWatcher processWatcher;
-	private DropboxUtil dropbox;
-	private Timer autoSyncTimer;
-	private long lastSyncTime;
+	private HashMap<String, AppConfig> appConfigs = new HashMap<String, AppConfig>();
+	private PropertyUtil kurumConfig = PropertyUtil.getDefaultProperty();
+	private ProcessWatcher processWatcher = new ProcessWatcher();
+	private DropboxUtil dropbox = DropboxUtil.getDefaultDropbox();
+	private Timer autoSyncTimer = new Timer();
+	private long lastSyncTime = new Date().getTime() - AUTOMATIC_SYNC_PERIOD;
 	
 	public AppSyncr() {
-		dropbox = DropboxUtil.getDefaultDropbox();
-		
 		if (!dropbox.isLinked()) {
 			Global.set("DropboxLoginError", true);
 		}
 		
-		processWatcher = new ProcessWatcher();
 		processWatcher.addEventListener(this);
-		lastSyncTime = new Date().getTime() - AUTOMATIC_SYNC_PERIOD;
 		
 		Global.addEventlistener(this);
 	}
@@ -76,7 +72,6 @@ public class AppSyncr implements ProcessWatcherListener, GlobalEventListener {
 	
 	public void init() {
 		reload();
-		kurumConfig = PropertyUtil.getDefaultProperty();
 		startTimedSync();
 		syncAllApps();
 	}
@@ -87,7 +82,6 @@ public class AppSyncr implements ProcessWatcherListener, GlobalEventListener {
 	}
 	
 	public void startTimedSync() {
-		autoSyncTimer = new Timer();
 		autoSyncTimer.scheduleAtFixedRate(new TimerTask() {
 			
 			@Override
@@ -107,7 +101,8 @@ public class AppSyncr implements ProcessWatcherListener, GlobalEventListener {
 	}
 	
 	public void refreshAppConfigs() {
-		appConfigs = new HashMap<String, AppConfig>();
+		appConfigs.clear();
+		
 		AppConfigParser configParser = new AppConfigParser();
 		
 		File file = new File(Environment.parsePath("%AppData%/Kurum/AppConfigs"));

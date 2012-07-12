@@ -4,10 +4,10 @@ import java.util.ResourceBundle;
 
 public class Language {
 	private final static String LANGFILE = "kr.iamghost.kurum.Messages";
-	private final static ResourceBundle resource;
+	private final static ResourceBundle resource = ResourceBundle.getBundle(LANGFILE);
 	
 	static {
-		 resource = ResourceBundle.getBundle(LANGFILE);
+		 
 	}
 	
 	public static String getString(String key) {
