@@ -197,8 +197,7 @@ public class AppConfigImportWindow extends Window {
 	protected void onSelectConfigList() {
 		int index = recentConfigList.getSelectionIndex();
 		
-		if (index >= 0)
-		{
+		if (index >= 0) {
 			selectedFileName = recentConfigList.getItem(index).toString();
 			downloadButton.setEnabled(true);
 			deleteButton.setEnabled(true);
@@ -253,9 +252,7 @@ public class AppConfigImportWindow extends Window {
 				
 				Global.set("AppConfigImportFinished", true);
 				close();
-			}
-			else
-			{
+			} else {
 				Global.setObject("LastShell", getShell());
 				Global.set("MessageBox", Language.getString("ConfigImportFailed"));
 			}

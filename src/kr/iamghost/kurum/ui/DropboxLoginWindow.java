@@ -85,8 +85,7 @@ public class DropboxLoginWindow extends Window implements SelectionListener{
 			loginButton.setText(Language.getString("Logout"));
 			createAccountButton.setVisible(false);
 			getShell().pack(true);
-		}
-		else {
+		} else {
 			createAccountButton.setVisible(true);
 			loginButton.setText(Language.getString("LoginWithDropbox"));
 			accountInfoLabel.setText("");
@@ -97,8 +96,7 @@ public class DropboxLoginWindow extends Window implements SelectionListener{
 	public void widgetSelected(SelectionEvent event) {
 		if (event.widget.equals(loginButton)) {
 			onClickLoginButton();
-		}
-		else if (event.widget.equals(createAccountButton)) {
+		} else if (event.widget.equals(createAccountButton)) {
 			onClickCreateAccountButton();
 		}
 	}
@@ -125,12 +123,9 @@ public class DropboxLoginWindow extends Window implements SelectionListener{
 	}
 	
 	public void onClickLoginButton() {
-		if (dropbox.isLinked())
-		{
+		if (dropbox.isLinked()) {
 			dropbox.deleteToken();
-		}
-		else
-		{
+		} else {
 			MessageBox messageBox = new MessageBox(getShell(), SWT.ICON_INFORMATION | SWT.OK);
 			messageBox.setMessage(Language.getString("LoginNotify"));
 			
@@ -148,20 +143,19 @@ public class DropboxLoginWindow extends Window implements SelectionListener{
 			try {
 				launcher = new BrowserLauncher();
 				launcher.openURLinBrowser(url);
-			}
-			catch (Exception exception) {
+			} catch (Exception exception) {
 				exception.printStackTrace();
 			}
 
 			int respond = messageBox.open();
+			
 			if (respond == SWT.OK) {
 				if (dropbox.retrieveNewToken() != null) {
 					messageBox.setMessage(Language.getString("LoginSaved"));
 					messageBox.open();
 					dropbox.saveToken();
 					dropbox.loadSavedKeys();
-				}
-				else {
+				} else {
 					Global.setObject("LastShell", getShell());
 					Global.set("MessageBox", "LoginFailed");
 				}

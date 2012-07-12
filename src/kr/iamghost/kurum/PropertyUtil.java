@@ -35,8 +35,7 @@ public class PropertyUtil {
 		try {
 			InputStream is = getClass().getResourceAsStream(path);
 			init(is);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			System.out.println("Cannot find local properties file: " + path);
 			System.exit(1);
 		}
@@ -61,8 +60,7 @@ public class PropertyUtil {
 			FileInputStream is;
 			is = new FileInputStream(filePath);
 			init(is);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
@@ -72,7 +70,9 @@ public class PropertyUtil {
 	public String getString(String key) {
 		String data = property.getProperty(key);
 		
-		if (data == null) return "";
+		if (data == null) {
+			return "";
+		}
 		
 		return property.getProperty(key);
 	}
@@ -80,9 +80,7 @@ public class PropertyUtil {
 	public void setString(String key, String value) {
 		if (value.equals("")) {
 			property.remove(key);
-		}
-		else
-		{
+		} else {
 			property.setProperty(key, value);
 		}
 		save();
@@ -93,8 +91,7 @@ public class PropertyUtil {
 			FileOutputStream os = new FileOutputStream(propertyFilePath);
 			property.store(os, "");
 			os.close();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 

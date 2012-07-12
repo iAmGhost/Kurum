@@ -31,8 +31,7 @@ public class WindowFactory {
 		
 		if (SystemUtils.IS_OS_LINUX) {
 			is = Images.class.getResourceAsStream("Kurum_64px.png");
-		}
-		else {
+		} else {
 			is = Images.class.getResourceAsStream("Kurum_512px.png");
 		}
 		
@@ -55,10 +54,10 @@ public class WindowFactory {
 			instance.getShell().setImage(image);
 			instance.init();
 			return instance;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 		return null;
 	}
 

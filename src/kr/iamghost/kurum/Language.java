@@ -12,10 +12,10 @@ public class Language {
 	
 	public static String getString(String key) {
 		String value = key;
+		
 		try {
 			value = resource.getString(key);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
@@ -24,11 +24,11 @@ public class Language {
 	
 	public static String getFormattedString(String key, Object ... args) {
 		String value = key;
+		
 		try {
 			value = resource.getString(key);
 			value = String.format(value, args);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		

@@ -40,10 +40,11 @@ public class DropboxEntry {
 	}
 	
 	public List<Entry> getContents() {
-		if (isValid)
+		if (isValid) {
 			return entry.contents;
-		else
+		} else {
 			return null;
+		}
 	}
 	
 	public Entry getEntry() {

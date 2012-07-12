@@ -21,6 +21,7 @@ public class ZipUtil {
 	
 	public ZipUtil loadZip(File zipFile) {
 		setFile(zipFile);
+		
 		try {
 			fis = new FileInputStream(zipFile);
 			zis = new ZipArchiveInputStream(fis);
@@ -35,6 +36,7 @@ public class ZipUtil {
 	
 	public ZipUtil createZip(File zipFile) {
 		setFile(zipFile);
+		
 		try {
 			zos = new ZipArchiveOutputStream(zipFile);
 		} catch (IOException e) {
@@ -52,7 +54,6 @@ public class ZipUtil {
 	
 	public void add(File file, String pathInZipFile, ArrayList<String> excludes) {
 		if (file.isFile()) {
-			
 			boolean excludeFound = false;
 			
 			if (excludes != null) {
@@ -86,8 +87,7 @@ public class ZipUtil {
 					e.printStackTrace();
 				}
 			}
-		}
-		else {
+		} else {
 			File[] files = file.listFiles();
 			for (File innerFile : files) {
 				add(innerFile, pathInZipFile + "/" + innerFile.getName(), excludes);
@@ -123,20 +123,22 @@ public class ZipUtil {
 				}
 				fos.close();
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
 	public void close() {
 		try {
-			if (zos != null)
+			if (zos != null) {
 				zos.close();
-			if (zis != null)
+			}
+			if (zis != null) {
 				zis.close();
-			if (fis != null)
+			}
+			if (fis != null) {
 				fis.close();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

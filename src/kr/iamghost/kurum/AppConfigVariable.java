@@ -21,8 +21,7 @@ public class AppConfigVariable {
 	public void setType(String typeString) {
 		if (typeString.equalsIgnoreCase("directory")) {
 			type = VarType.DIRECTORY;
-		}
-		else {
+		} else {
 			type = VarType.FILE;
 		}
 	}

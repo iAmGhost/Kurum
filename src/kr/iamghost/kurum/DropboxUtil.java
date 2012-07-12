@@ -79,15 +79,17 @@ public class DropboxUtil {
 		try {
 			FileInputStream is = new FileInputStream(source);
 			Entry newEntry;
-			if (!overwrite)
+			
+			if (!overwrite) {
 				newEntry = client.putFile(destPath, is, source.length(), rev, null);
-			else
+			}
+			else {
 				newEntry = client.putFileOverwrite(destPath, is, source.length(), null);
+			}
 			
 			is.close();
 			result.setEntry(newEntry);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
@@ -100,6 +102,7 @@ public class DropboxUtil {
 	
 	public DropboxFileInfo download(String path, File dest, String rev) {
 		DropboxFileInfo fileInfo = null;
+		
 		try {
 			dest.mkdirs();
 			
@@ -134,11 +137,9 @@ public class DropboxUtil {
 		   entry.setEntry(newEntry);
 		   
 		   inputStream.close();
-		}
-		catch (DropboxUnlinkedException e) {
+		} catch (DropboxUnlinkedException e) {
 			//
-		}
-		catch (DropboxException e) {
+		} catch (DropboxException e) {
 			//
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -165,6 +166,7 @@ public class DropboxUtil {
 		if (!auth_key.equals("") && !auth_secret.equals("")) {
 			AccessTokenPair tokens = new AccessTokenPair(auth_key, auth_secret);
 			session.setAccessTokenPair(tokens);
+			
 			if (isLinked()) {
 				Global.set("OnDropboxLoggedIn", true);
 			}
@@ -179,9 +181,7 @@ public class DropboxUtil {
 		try {
 			if (isLoggedIn) {
 				linked = true;
-			}
-			else
-			{
+			} else {
 				if (client.accountInfo().uid > 0 && session.isLinked()) {
 					linked = true;
 					isLoggedIn = true;
@@ -217,11 +217,11 @@ public class DropboxUtil {
 	public String requestNewToken() {
 		String url = null;
 		WebAuthInfo authinfo = null;
+		
 		try {
 			authinfo = session.getAuthInfo();
 			url = authinfo.url;
-		}
-		catch (DropboxException e) {
+		} catch (DropboxException e) {
 			e.printStackTrace();
 		}
 		return url;
@@ -234,11 +234,9 @@ public class DropboxUtil {
 		
 		try {
 			userid = session.retrieveWebAccessToken(requestTokenPair);
-		}
-		catch (DropboxUnlinkedException e) {
+		} catch (DropboxUnlinkedException e) {
 			userid = null;
-		}
-		catch (DropboxException e) {
+		} catch (DropboxException e) {
 			e.printStackTrace();
 		}
 		
@@ -256,11 +254,13 @@ public class DropboxUtil {
 			session.unlink();
 			isLoggedIn = false;
 		}
+		
 		saveTokenToConfig("", "");
 	}
 	
 	protected void saveTokenToConfig(String key, String secret) {
 		PropertyUtil kurumConfig = PropertyUtil.getDefaultProperty();
+		
 		kurumConfig.setString("oauth_key", key);
 		kurumConfig.setString("oauth_secret", secret);
 		kurumConfig.save();

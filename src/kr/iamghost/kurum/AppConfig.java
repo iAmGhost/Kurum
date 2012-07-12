@@ -36,8 +36,9 @@ public class AppConfig {
 	public void addFile(AppConfigFileEntry file) {
 		boolean found = false;
 		
-		if (!found)
+		if (!found) {
 			files.add(file);
+		}
 	}
 	
 	public Iterator<AppConfigFileEntry> getFilesIterator() {
@@ -102,17 +103,13 @@ public class AppConfig {
 			if (Environment.getVariableData(var.getName()) == null) {
 				if (!dataInConfig.equals("")) {
 					Environment.addVariable(var.getName(), dataInConfig);
-				}
-				else
-				{
+				} else {
 					errorNotFound = false;
 					Global.setObject("VariableNotFoundError", var);
 					Global.setObject("VariableNotFoundAppConfig", this);
 					break;
 				}
-			}
-			else
-			{
+			} else {
 				Environment.getVariableData(var.getName());
 			}
 		}
@@ -125,8 +122,10 @@ public class AppConfig {
 	}
 	
 	public boolean isValid() {
-		if (getAppName() != null && getAppTitle() != null)
+		if (getAppName() != null && getAppTitle() != null) {
 			return true;
+		}
+		
 		return false;
 	}
 

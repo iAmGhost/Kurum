@@ -294,9 +294,7 @@ public class MainWindow extends Window implements GlobalEventListener, ProcessWa
 	public void showTooltip(ToolTip tip) {
 		if (SystemTray.isSupported()) {
 			trayItem.setToolTip(tip);
-		}
-		else
-		{
+		} else {
 			tip.setLocation(0, 0);
 		}
 		
@@ -312,12 +310,10 @@ public class MainWindow extends Window implements GlobalEventListener, ProcessWa
 			msg.setMessage(Language.getString("NeedDropboxLogin"));
 			msg.open();
 			WindowFactory.create("DropboxLogin").open();
-		}
-		else if (e.getEventKey().equals("RefreshAppConfigs") && e.getBool()) {
+		} else if (e.getEventKey().equals("RefreshAppConfigs") && e.getBool()) {
 			appSyncr.reload();
 			Log.write("Reload AppConfigs");
-		}
-		else if(e.getEventKey().equals("VariableNotFoundError")) {
+		} else if(e.getEventKey().equals("VariableNotFoundError")) {
 			final AppConfigVariable var = (AppConfigVariable)e.getObject();
 			getDisplay().asyncExec(new Runnable() {
 				
@@ -327,8 +323,7 @@ public class MainWindow extends Window implements GlobalEventListener, ProcessWa
 					handleVariableNotFoundError(var);
 				}
 			});
-		}
-		else if (e.getEventKey().equals("MessageBox")) {
+		} else if (e.getEventKey().equals("MessageBox")) {
 			getShell().forceActive();
 			Shell shell = (Shell)Global.getObject("LastShell");
 			if (shell == null) shell = getShell();
@@ -337,18 +332,15 @@ public class MainWindow extends Window implements GlobalEventListener, ProcessWa
 			msg.setText(Environment.KURUMTITLE);
 			msg.setMessage(e.getString());
 			msg.open();
-		}
-		else if (e.getEventKey().equals("ShowToolTip")) {
+		} else if (e.getEventKey().equals("ShowToolTip")) {
 			ToolTip tip = new ToolTip(getShell(), SWT.BALLOON | SWT.ICON_INFORMATION);
 			tip.setMessage(e.getString());
 			tip.setText(Environment.KURUMTITLE);
 			showTooltip(tip);
-		}
-		else if (e.getEventKey().equals("OnDropboxLoggedIn")) {
+		} else if (e.getEventKey().equals("OnDropboxLoggedIn")) {
 			if (appSyncr != null)
 				appSyncr.syncAllApps();
-		}
-		else if(e.getEventKey().equals("LastWindowClosed")) {
+		} else if(e.getEventKey().equals("LastWindowClosed")) {
 			Global.set("ShowToolTip", Language.getString("TrayNotice"));
 			setJumped(false);
 		}
@@ -362,8 +354,7 @@ public class MainWindow extends Window implements GlobalEventListener, ProcessWa
 			DirectoryDialog dlg = new DirectoryDialog(getShell());
 			dlg.setMessage(var.getMessage());
 			dir = dlg.open();
-		}
-		else {
+		} else {
 			FileDialog dlg = new FileDialog(getShell(), SWT.OPEN);
 			dlg.setFilterExtensions(var.getFilters());
 			dlg.setText(var.getMessage());
@@ -384,10 +375,8 @@ public class MainWindow extends Window implements GlobalEventListener, ProcessWa
 	public void onProcessDisappeared(ProcessWatcherEvent e) {
 		final String processName = e.getProcessName();
 		String ignore = PropertyUtil.getDefaultProperty().getString("ignore_" + processName);
-		if(!appSyncr.isWatchingProcess(processName) && !ignore.equals("true"))
-		{
+		if(!appSyncr.isWatchingProcess(processName) && !ignore.equals("true")) {
 			getDisplay().asyncExec(new Runnable() {
-				
 				@Override
 				public void run() {
 					Global.set("LastSuggestedProcess", processName);

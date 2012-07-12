@@ -29,44 +29,30 @@ public class SuggestionParser extends DefaultHandler {
 		
 		try {
 			parser = factory.newSAXParser();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
 	public void startElement(String uri, String localName, String qName,
-			Attributes attributes)
-			throws SAXException {
+			Attributes attributes) throws SAXException {
 		
 		if (qName.equalsIgnoreCase("suggestion")) {
 			status = Status.SUGGESTION;
 			currentProcess = attributes.getValue("processName");
-		}
-		else if (qName.equalsIgnoreCase("entry"))
-		{
+		} else if (qName.equalsIgnoreCase("entry")) {
 			status = Status.ENTRY;
 			tempSuggestion = new Suggestion();
 			tempSuggestion.setProcessName(currentProcess);
-		}
-		else if (qName.equalsIgnoreCase("title"))
-		{
+		} else if (qName.equalsIgnoreCase("title")) {
 			status = Status.TITLE;
-		}
-		else if (qName.equalsIgnoreCase("internalName"))
-		{
+		} else if (qName.equalsIgnoreCase("internalName")) {
 			status = Status.INTERNALNAME;
-		}
-		else if (qName.equalsIgnoreCase("description"))
-		{
+		} else if (qName.equalsIgnoreCase("description")) {
 			status = Status.DESCRIPTION;
-		}
-		else if (qName.equalsIgnoreCase("url"))
-		{
+		} else if (qName.equalsIgnoreCase("url")) {
 			status = Status.URL;
-		}
-		else
-		{
+		} else {
 			status = Status.NONE;
 		}
 	}
@@ -108,12 +94,10 @@ public class SuggestionParser extends DefaultHandler {
 		try {
 			URL xmlURL = new URL(url);
 			parser.parse(new InputSource(xmlURL.openStream()), this);
-		}
-		catch (SAXException e) {
+		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

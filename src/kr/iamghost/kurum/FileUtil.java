@@ -25,6 +25,7 @@ public class FileUtil {
 	public static boolean delete(File file) {
 		if (file.isDirectory()) {
 			File[] files = file.listFiles();
+			
 			for (File innerFile : files) {
 				delete(innerFile);
 			}
@@ -49,8 +50,7 @@ public class FileUtil {
 			}
 			
 			bos.close();
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}

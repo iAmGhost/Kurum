@@ -12,7 +12,6 @@ public class LuaEngine {
 	public enum LuaMode {
 		UPLOAD, DOWNLOAD;
 	}
-	
 	private static LuaEngine defaultLuaEngine;
 	private ScriptEngine engine;
 	
@@ -28,16 +27,17 @@ public class LuaEngine {
 		try {
 			String script = appConfig.getLuaScriptContent();
 			
-			if (mode == LuaMode.DOWNLOAD)
+			if (mode == LuaMode.DOWNLOAD) {
 				script += "\nonDownload()";
-			else
+			} else {
 				script += "\nonUpload()";
+			}
 			
 			CompiledScript cs = ((Compilable)engine).compile(script);
 			Bindings b = engine.createBindings();
+			
 			b.put("kurum", new AppSyncrEngine(appConfig));
 			b.put("fileutil", new FileUtil());
-			
 			
 			cs.eval(b);
 		} catch (ScriptException e1) {

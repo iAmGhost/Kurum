@@ -46,16 +46,14 @@ public class ProcessWatcher implements ActionListener {
 	public void checkProcesses() {
 		ProcessUtil.refresh();
 		
-		for (Iterator<String> it = watchList.iterator(); it.hasNext(); )
-		{
+		for (Iterator<String> it = watchList.iterator(); it.hasNext();) {
 			String processName = it.next();
 			if (ProcessUtil.isProcessExists(processName) && !appearedList.contains(processName)) {
 				appearedList.add(processName);
 			}
 		}
 		
-		for (Iterator<String> it = appearedList.iterator(); it.hasNext(); )
-		{
+		for (Iterator<String> it = appearedList.iterator(); it.hasNext();) {
 			String processName = it.next();
 			
 			if (!ProcessUtil.isProcessExists(processName)) {

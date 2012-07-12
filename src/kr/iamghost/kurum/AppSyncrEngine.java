@@ -39,8 +39,9 @@ public class AppSyncrEngine {
 		while (it.hasNext()) {
 			AppConfigFileEntry fileInfo = it.next();
 			
-			if (fileInfo.isNeedCleanup())
+			if (fileInfo.isNeedCleanup()) {
 				FileUtil.delete(fileInfo.getOriginalFile());
+			}
 			
 			addDownload(fileInfo.getDropboxPath(), fileInfo.getOriginalPath());
 		}
@@ -54,8 +55,7 @@ public class AppSyncrEngine {
 		try {
 			File tempZipFile = File.createTempFile(appName, ".zip");
 			zipFile = new ZipUtil().createZip(tempZipFile);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -70,6 +70,7 @@ public class AppSyncrEngine {
 	
 	public void addUpload(String filePath, String pathInZipFile, ArrayList<String> excludes) {
 		File file = new File(parsePath(filePath));
+		
 		if (file.exists()) {
 			zipFile.add(file, pathInZipFile, excludes);
 		}
@@ -123,8 +124,7 @@ public class AppSyncrEngine {
 			zipFile.close();
 			
 			zipFile.getFile().delete();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

@@ -27,7 +27,10 @@ public class Util {
 	
 	public static void browseDirectory(String path) {
 	    File file = new File(path);
-	    if (!file.isDirectory()) file.mkdirs();
+	    
+	    if (!file.isDirectory()) {
+	    	file.mkdirs();
+	    }
 	    
 	    try {
 			Desktop.getDesktop().open(file);

@@ -32,25 +32,21 @@ public class AppConfigParser extends DefaultHandler {
 		
 		try {
 			parser = factory.newSAXParser();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
 		if (SystemUtils.IS_OS_WINDOWS) {
 			platformString = "Windows";
-		}
-		else if (SystemUtils.IS_OS_MAC) {
+		} else if (SystemUtils.IS_OS_MAC) {
 			platformString = "Mac";
-		}
-		else if (SystemUtils.IS_OS_LINUX) {
+		} else if (SystemUtils.IS_OS_LINUX) {
 			platformString = "Linux";
 		}
 	}
 	
 	public void startElement(String uri, String localName, String qName,
-			Attributes attributes)
-			throws SAXException {
+			Attributes attributes) throws SAXException {
 		stringBuffer = new StringBuffer();
 		
 		if (qName.equalsIgnoreCase("AppConfig")) {
@@ -59,41 +55,31 @@ public class AppConfigParser extends DefaultHandler {
 			tempConfig.setOriginalFile(new File(filePath));
 			tempConfig.setAppName(attributes.getValue("internalName"));
 			tempConfig.setSupportedVersion(attributes.getValue("kurumVersion"));
-		}
-		else if(qName.equalsIgnoreCase("title")) {
+		} else if(qName.equalsIgnoreCase("title")) {
 			status = Status.TITLE;
-		}
-		else if(qName.equalsIgnoreCase("author")) {
+		} else if(qName.equalsIgnoreCase("author")) {
 			status = Status.AUTHOR;
-		}
-		else if (qName.equalsIgnoreCase("entries")) {
+		} else if (qName.equalsIgnoreCase("entries")) {
 			status = Status.ENTRIES;
-		}
-		else if (qName.equalsIgnoreCase("entry")) {
-			if (attributes.getValue("os").equalsIgnoreCase(platformString))
-			{
+		} else if (qName.equalsIgnoreCase("entry")) {
+			if (attributes.getValue("os").equalsIgnoreCase(platformString)) {
 				this.found = true;
 				tempConfig.setProcess(attributes.getValue("process"));
 				status = Status.ENTRY;
-			}
-			else
-			{
+			} else {
 				this.found = false;
 			}
-		}
-		else if (qName.equalsIgnoreCase("var") && found) {
+		} else if (qName.equalsIgnoreCase("var") && found) {
 			tempVariable = new AppConfigVariable();
 			tempVariable.setName(attributes.getValue("name"));
 			tempVariable.setType(attributes.getValue("type"));
 			tempVariable.setFilter(attributes.getValue("filter"));
 			status = Status.VAR;
-		}
-		else if (qName.equalsIgnoreCase("file") && found) {
+		} else if (qName.equalsIgnoreCase("file") && found) {
 			tempFileEntry = new AppConfigFileEntry();
 			tempFileEntry.setDropboxPath(attributes.getValue("dropboxPath"));
 			status = Status.FILE;
-		}
-		else if (qName.equalsIgnoreCase("dir") && found) {
+		} else if (qName.equalsIgnoreCase("dir") && found) {
 			tempFileEntry = new AppConfigFileEntry();
 			tempFileEntry.setDropboxPath(attributes.getValue("dropboxPath"));
 			tempFileEntry.setIsFile(false);
@@ -106,14 +92,11 @@ public class AppConfigParser extends DefaultHandler {
 				tempFileEntry.setNeedCleanup(true);
 			
 			status = Status.DIR;
-		}
-		else if(qName.equalsIgnoreCase("lua")) {
+		} else if(qName.equalsIgnoreCase("lua")) {
 			tempConfig.setUsesLuaScript(true);
 			
 			status = Status.LUA;
-		}
-		else
-		{
+		} else {
 			status = Status.NONE;
 		}
 	}

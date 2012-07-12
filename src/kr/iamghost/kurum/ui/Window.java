@@ -91,11 +91,13 @@ public class Window {
 	}
 	
 	public void jumpToNewWindow(String windowName) {
-		isJumped = true;
 		Window newWindow = WindowFactory.create(windowName);
+		
 		newWindow.setLastWindowName(this.windowName);
 		newWindow.open();
 		close();
+		
+		isJumped = true;
 	}
 	
 	public void hide() {
@@ -113,7 +115,10 @@ public class Window {
 
 	public void show(boolean raise) {
 		shell.setVisible(true);
-		if (raise) shell.forceActive();
+		
+		if (raise) {
+			shell.forceActive();
+		}
 	}
 
 	public Display getDisplay() {

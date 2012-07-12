@@ -176,9 +176,7 @@ public class SuggestionWindow extends Window {
 				Global.set("RefreshAppConfigs", true);
 				askToSync(tempConfig);
 				this.close();
-			}
-			else
-			{
+			} else {
 				file.delete();
 			}
 

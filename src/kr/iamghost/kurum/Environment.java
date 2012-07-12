@@ -39,7 +39,6 @@ public class Environment {
 				APPDATA_LOCAL = APPDATA;
 			}
 			
-			
 			try {
 				STEAM = Advapi32Util.registryGetStringValue(WinReg.HKEY_CURRENT_USER,
 						"Software\\Valve\\Steam", "SteamPath");
@@ -47,13 +46,11 @@ public class Environment {
 			catch (Win32Exception e) {
 				STEAM = "";
 			}
-		}
-		else if (SystemUtils.IS_OS_MAC_OSX) {
+		} else if (SystemUtils.IS_OS_MAC_OSX) {
 			APPDATA = homeDir + "/Library/Application Support";
 			APPDATA_LOCAL = APPDATA;
 			STEAM = APPDATA + "/Steam";
-		}
-		else if (SystemUtils.IS_OS_LINUX) {
+		} else if (SystemUtils.IS_OS_LINUX) {
 			APPDATA = homeDir + "/.local/share";
 			APPDATA_LOCAL = APPDATA;
 			STEAM = APPDATA + "/Steam";
@@ -62,7 +59,6 @@ public class Environment {
 		KURUM = APPDATA + "/Kurum";
 		VERSION = "#2012022701";
 		KURUMTITLE = "Kurum " + VERSION;
-		
 		
 		addVariable("LocalAppData", APPDATA_LOCAL);
 		addVariable("AppData", APPDATA);
@@ -88,8 +84,9 @@ public class Environment {
 		path = path.replaceAll("\\\\", "/");
 		
 		for (EnvironmentVariable ev : envVars.values()) {
-			if (ev.getValue() != null)
+			if (ev.getValue() != null) {
 				path = path.replaceAll(ev.getName(), ev.getValue());
+			}
 		}
 
 		return path;

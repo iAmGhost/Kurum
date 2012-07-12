@@ -349,6 +349,7 @@ public class SyncManagerWindow extends Window implements GlobalEventListener {
 					appConfigCombo.add(newConfig.getAppTitle());
 				}
 			}
+			
 			if (appConfigCombo.getItemCount() > 0) {
 				appConfigCombo.select(0);
 				onAppConfigListSelected(0);	

@@ -14,8 +14,9 @@ public class ProcessUtil {
 		Runtime runtime;
 		String processString = "tasklist";
 		
-		if (!SystemUtils.IS_OS_WINDOWS)
+		if (!SystemUtils.IS_OS_WINDOWS) {
 			processString = "ps -ax";
+		}
 		
 		try {
 			runtime = Runtime.getRuntime();
@@ -30,15 +31,15 @@ public class ProcessUtil {
 			while ((line = br.readLine()) != null) {
 				processList += line + "\n";
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
 	public static boolean isProcessExists(String processName) {
-		if (processList.contains(processName))
+		if (processList.contains(processName)) {
 			return true;
+		}
 		
 		return false;
 	}

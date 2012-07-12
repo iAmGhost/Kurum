@@ -22,20 +22,22 @@ public class AppSyncr implements ProcessWatcherListener, GlobalEventListener {
 	
 	public AppSyncr() {
 		dropbox = DropboxUtil.getDefaultDropbox();
-		if (!dropbox.isLinked()) Global.set("DropboxLoginError", true);
+		
+		if (!dropbox.isLinked()) {
+			Global.set("DropboxLoginError", true);
+		}
 		
 		processWatcher = new ProcessWatcher();
 		processWatcher.addEventListener(this);
 		lastSyncTime = new Date().getTime() - AUTOMATIC_SYNC_PERIOD;
+		
 		Global.addEventlistener(this);
 	}
 	
 	public boolean isWatchingProcess(String processName)
 	{
-		for (AppConfig config : appConfigs.values())
-		{
-			if (config.getProcessName().equalsIgnoreCase(processName))
-			{
+		for (AppConfig config : appConfigs.values()) {
+			if (config.getProcessName().equalsIgnoreCase(processName)) {
 				return true;
 			}
 		}
@@ -52,8 +54,7 @@ public class AppSyncr implements ProcessWatcherListener, GlobalEventListener {
 	}
 
 	public void syncAllAppsNotThreaded() {
-		if (dropbox.isLinked() == true)
-		{
+		if (dropbox.isLinked() == true) {
 			for (final AppConfig app : appConfigs.values()) {
 				syncApp(app, false);
 			}
@@ -62,7 +63,6 @@ public class AppSyncr implements ProcessWatcherListener, GlobalEventListener {
 	
 	public void timedSync() {
 		long currentTime = new Date().getTime();
-		
 		long diff = currentTime - lastSyncTime;
 		
 		if (diff >= AUTOMATIC_SYNC_PERIOD) {
@@ -118,8 +118,7 @@ public class AppSyncr implements ProcessWatcherListener, GlobalEventListener {
 				AppConfig tempConfig;
 				configParser.parse(singleFile.getAbsolutePath());
 				tempConfig = configParser.getAppConfig();
-				if (tempConfig != null)
-				{
+				if (tempConfig != null) {
 					appConfigs.put(tempConfig.getProcessName(), tempConfig);
 				}
 					
@@ -140,8 +139,7 @@ public class AppSyncr implements ProcessWatcherListener, GlobalEventListener {
 		if (!config.isUsesLuaScript()) {
 			AppSyncrEngine engine = new AppSyncrEngine(config);
 			engine.doDefaultUpload();
-		}
-		else {
+		} else {
 			LuaEngine.getDefaultLuaEngine().run(config, LuaMode.UPLOAD);
 		}
 			
@@ -156,8 +154,7 @@ public class AppSyncr implements ProcessWatcherListener, GlobalEventListener {
 		if (!config.isUsesLuaScript()) {
 			AppSyncrEngine engine = new AppSyncrEngine(config);
 			engine.doDefaultDownload();
-		}
-		else {
+		} else {
 			LuaEngine.getDefaultLuaEngine().run(config, LuaMode.DOWNLOAD);
 		}
 			
@@ -203,36 +200,27 @@ public class AppSyncr implements ProcessWatcherListener, GlobalEventListener {
 			
 			DropboxEntry lastSync = dropbox.getMetadata(archivePath);
 			
-			
 			if (!lastSync.isValid || lastSync.isDeleted) {
 				//First upload->Upload
 				Log.write("First upload :" + config.getAppTitle());
 				uploadToDropbox(config);
-			}
-			else if(lastSync.isValid) {
+			} else if(lastSync.isValid) {
 				if (!lastSync.isDeleted && localDate == null) {
 					//First sync->Download
 					Log.write("First sync :" + config.getAppTitle());
 					downloadToLocal(config);
-				}
-				else if(lastSync.modifydate.after(localDate)) {
+				} else if(lastSync.modifydate.after(localDate)) {
 					//Dropbox is newer->Download
 					Log.write("Dropbox is newer :" + config.getAppTitle());
 					downloadToLocal(config);
-				}
-				else if(lastSync.modifydate.before(localDate) && !force)
-				{
+				} else if(lastSync.modifydate.before(localDate) && !force) {
 					Log.write("Local is newer :" + config.getAppTitle());
 					//Local is (maybe) newer
 					uploadToDropbox(config);
-				}
-				else if (force)
-				{
+				} else if (force) {
 					Log.write("Forcing upload :" + config.getAppTitle());
 					uploadToDropbox(config);
-				}
-				else
-				{
+				} else {
 					//Same, but will never reach here except timed sync
 					Log.write("Same, POMF =3 :" + config.getAppTitle());
 				}	
@@ -268,8 +256,7 @@ public class AppSyncr implements ProcessWatcherListener, GlobalEventListener {
 		else if(eventKey.equals("SyncNow")) {
 			if (e.getObject() == null) {
 				syncAllApps();
-			}
-			else {
+			} else {
 				syncApp((AppConfig)e.getObject(), false);
 			}
 		}
