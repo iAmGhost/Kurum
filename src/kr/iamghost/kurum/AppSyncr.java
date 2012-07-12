@@ -197,27 +197,27 @@ public class AppSyncr implements ProcessWatcherListener, GlobalEventListener {
 			
 			if (!lastSync.isValid || lastSync.isDeleted) {
 				//First upload->Upload
-				Log.write("First upload :" + config.getAppTitle());
+				Log.write("First upload: " + config.getAppTitle());
 				uploadToDropbox(config);
 			} else if(lastSync.isValid) {
 				if (!lastSync.isDeleted && localDate == null) {
 					//First sync->Download
-					Log.write("First sync :" + config.getAppTitle());
+					Log.write("First sync: " + config.getAppTitle());
 					downloadToLocal(config);
 				} else if(lastSync.modifydate.after(localDate)) {
 					//Dropbox is newer->Download
-					Log.write("Dropbox is newer :" + config.getAppTitle());
+					Log.write("Dropbox is newer: " + config.getAppTitle());
 					downloadToLocal(config);
 				} else if(lastSync.modifydate.before(localDate) && !force) {
-					Log.write("Local is newer :" + config.getAppTitle());
+					Log.write("Local is newer: " + config.getAppTitle());
 					//Local is (maybe) newer
 					uploadToDropbox(config);
 				} else if (force) {
-					Log.write("Forcing upload :" + config.getAppTitle());
+					Log.write("Forcing upload: " + config.getAppTitle());
 					uploadToDropbox(config);
 				} else {
 					//Same, but will never reach here except timed sync
-					Log.write("Same, POMF =3 :" + config.getAppTitle());
+					Log.write("Same, POMF =3: " + config.getAppTitle());
 				}	
 			}
 		}

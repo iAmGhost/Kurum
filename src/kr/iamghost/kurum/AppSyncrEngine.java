@@ -143,18 +143,10 @@ public class AppSyncrEngine {
 		
 	}
 	
-	public void log(String line) {
-		Log.write(line);
-	}
-	
 	public String parsePath(String path) {
 		return Environment.parsePath(path);
 	}
-	
-	public void test() {
-		Log.write("test");
-	}
-	
+
 	public void saveSyncInfo(DropboxEntry entry) {
 		kurumConfig.setString(entry.fileName + "_date", entry.modifydate.toString());
 		kurumConfig.setString(entry.fileName + "_rev", entry.rev);
