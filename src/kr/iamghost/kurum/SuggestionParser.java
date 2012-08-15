@@ -87,6 +87,9 @@ public class SuggestionParser extends DefaultHandler {
 			tempSuggestion.setUrl(tempString);
 			status = Status.NONE;
 			break;
+			
+		default:
+			break;
 		}
 	}
 	

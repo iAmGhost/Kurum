@@ -132,6 +132,9 @@ public class AppConfigParser extends DefaultHandler {
 			if (stringBuffer != null)
 				stringBuffer.append(tempString);
 			break;
+			
+		default:
+			break;
 		}
 	}
 	
