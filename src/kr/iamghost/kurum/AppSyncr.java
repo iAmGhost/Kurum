@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.Display;
 
 public class AppSyncr implements ProcessWatcherListener, GlobalEventListener {
 	private final static int PROCESS_WATCH_PERIOD = 1000 * 5;
-	private final static int AUTOMATIC_SYNC_PERIOD = 1000 * 60 * 5;
+	private final static int AUTOMATIC_SYNC_PERIOD = 1000 * 30;
 	private HashMap<String, AppConfig> appConfigs = new HashMap<String, AppConfig>();
 	private PropertyUtil kurumConfig = PropertyUtil.getDefaultProperty();
 	private ProcessWatcher processWatcher = new ProcessWatcher();
