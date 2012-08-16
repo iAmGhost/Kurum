@@ -59,7 +59,7 @@
 			<fileset dir="./bin" includes="**/*.png" />
 			<fileset dir="./bin" includes="**/*.ico" />
 			<!-- SWT Jars -->
-			<fileset dir="${lib.dir}/swt" includes="swt-*-3.7.2.jar" />
+			<fileset dir="${lib.dir}/swt" includes="swt-*-* .jar" />
 			<zipgroupfileset dir="${lib.dir}" includes="*.jar" />
 		</swtjar>
 		
