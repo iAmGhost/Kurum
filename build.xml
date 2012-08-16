@@ -52,7 +52,7 @@
 	<target name="dist" depends="compile">
 		<swtjar jarfile="${temp.dir}/kurum_temp.jar"
 			targetmainclass="kr.iamghost.kurum.Main"
-			swtversion="3.7.2">
+			swtversion="4.2">
 			<!-- Application Classes -->
 			<fileset dir="./bin" includes="**/*.class" />
 			<fileset dir="./bin" includes="**/*.properties" />
