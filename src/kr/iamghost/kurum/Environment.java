@@ -55,7 +55,7 @@ public class Environment {
 		}
 		
 		KURUM = APPDATA + "/Kurum";
-		VERSION = "#20120816";
+		VERSION = "#20120819";
 		KURUMTITLE = "Kurum " + VERSION;
 		
 		addVariable("LocalAppData", APPDATA_LOCAL);
