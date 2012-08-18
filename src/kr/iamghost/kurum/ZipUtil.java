@@ -53,6 +53,11 @@ public class ZipUtil {
 	}
 	
 	public void add(File file, String pathInZipFile, ArrayList<String> excludes) {
+		if (!file.exists()) {
+			Log.write("No file found!" + file);
+			return;
+		}
+		
 		if (file.isFile()) {
 			boolean excludeFound = false;
 			

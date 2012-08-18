@@ -159,6 +159,8 @@ public class SuggestionWindow extends Window {
 			URL url = new URL(currentSuggestion.getUrl());
 			File file = new File(
 					Environment.KURUM + "/AppConfigs/"+ currentSuggestion.getInternalName() + ".xml");
+			
+			file.getParentFile().mkdirs();			
 			InputStream is = url.openStream();
 			FileOutputStream fos = new FileOutputStream(file);
 			
