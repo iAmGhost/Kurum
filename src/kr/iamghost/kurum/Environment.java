@@ -64,6 +64,7 @@ public class Environment {
 		addVariable("Documents", parsePath(new JFileChooser().getFileSystemView().
 				getDefaultDirectory().getAbsolutePath()));
 		addVariable("Steam", STEAM);
+		addVariable("Home", System.getProperty("user.home"));
 	}
 	
 	public static EnvironmentVariable getVariableData(String name) {
