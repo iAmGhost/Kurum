@@ -55,7 +55,7 @@ public class Environment {
 		}
 		
 		KURUM = APPDATA + "/Kurum";
-		VERSION = "#20120819";
+		VERSION = "#20140203";
 		KURUMTITLE = "Kurum " + VERSION;
 		
 		addVariable("LocalAppData", APPDATA_LOCAL);
@@ -64,7 +64,7 @@ public class Environment {
 		addVariable("Documents", parsePath(new JFileChooser().getFileSystemView().
 				getDefaultDirectory().getAbsolutePath()));
 		addVariable("Steam", STEAM);
-		addVariable("Home", System.getProperty("user.home"));
+		addVariable("Home", parsePath(System.getProperty("user.home")));
 	}
 	
 	public static EnvironmentVariable getVariableData(String name) {
